@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "system",
+    "emitDecoratorMetadata": true,
+    "declaration": false,
+    "noImplicitAny": false,
+    "outDir": "./tsout",
+    "sourceMap": true
+  },
+  "files": [
+    "src/app.ts"
+  ]
+}

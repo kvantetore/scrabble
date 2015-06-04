@@ -6,12 +6,7 @@ var connect = require('gulp-connect');
 var Builder = require('systemjs-builder');
 var runSequence = require('run-sequence');
 
-var tsProject = ts.createProject({
-  target: "es5",
-  module: "system",
-  emitDecoratorMetadata: true,
-  declaration: false,
-  noImplicitAny: false,
+var tsProject = ts.createProject("tsconfig.json", {
   typescript: require("typescript")
 });
 

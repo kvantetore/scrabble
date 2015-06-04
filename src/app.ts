@@ -6,7 +6,7 @@ import {Component, View, bootstrap} from 'angular2/angular2';
   selector: "app"
 })
 @View({
-  template: "<h1>Hello World!</h1>"
+  templateUrl: "app.html"
 })
 class AppComponent {
   constructor() {
