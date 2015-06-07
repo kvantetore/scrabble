@@ -4,3 +4,4 @@
 /// <reference path="../typings/rx/rx.all.d.ts" />
 /// <reference path="../typings/globals.d.ts" />
 /// <reference path="../typings/traceur-runtime.d.ts" />
+/// <reference path="../typings/moment/moment.d.ts" />

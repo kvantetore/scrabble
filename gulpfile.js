@@ -5,6 +5,7 @@ var del = require('del');
 var connect = require('gulp-connect');
 var Builder = require('systemjs-builder');
 var runSequence = require('run-sequence');
+var concat = require('gulp-concat');
 
 var tsProject = ts.createProject("tsconfig.json", {
   typescript: require("typescript")
@@ -34,7 +35,7 @@ gulp.task("app:ts", function() {
 });
 
 gulp.task("app:systemjs", function(cb) {
-  var appJs = config.tsOut + "/**/*"
+  var appJs = config.tsOut + "/app"
   var buildTask = appJs + " - " + "dist/js/vendor";
 
   var builder = new Builder();
@@ -69,7 +70,7 @@ gulp.task("app", ["app:js", "app:html"], function() {
  * Vendor
  */
 
-gulp.task("vendor:systemjs", function(cb) {
+gulp.task("vendor:systemjs", ["app:ts"], function(cb) {
    var appJs = config.tsOut + "/**/*"
    var buildTask = appJs + " - [" + appJs + "]";
 
@@ -93,8 +94,10 @@ gulp.task("vendor:globals", function() {
     "jspm_packages/system.js",
     "jspm_packages/es6-module-loader.js",
     "./jspm_packages/github/jmcriffey/bower-traceur-runtime@0.0.88/traceur-runtime.js",
-    "./jspm_packages/npm/reflect-metadata@0.1.0/Reflect.js"
+    "./jspm_packages/npm/reflect-metadata@0.1.0/Reflect.js",
+    "./jspm_packages/github/moment/moment@2.10.3/moment.js"
   ])
+  .pipe(concat("globals.js"))
   .pipe(gulp.dest("dist/js"));
 })
 

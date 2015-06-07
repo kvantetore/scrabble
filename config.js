@@ -11,6 +11,7 @@ System.config({
 
 System.config({
   "map": {
+    "moment": "github:moment/moment@2.10.3",
     "reflect-metadata": "npm:reflect-metadata@0.1.0",
     "rx": "npm:rx@2.5.3",
     "traceur": "github:jmcriffey/bower-traceur@0.0.88",
