@@ -8,6 +8,7 @@ var runSequence = require('run-sequence');
 var concat = require('gulp-concat');
 var mergeStream = require('merge-stream');
 var history = require('connect-history-api-fallback');
+var watch = require('gulp-watch');
 
 var tsProject = ts.createProject("tsconfig.json", {
   typescript: require("typescript")
@@ -16,7 +17,10 @@ var tsProject = ts.createProject("tsconfig.json", {
 var config = {
   dist: "./dist",
   tsFiles: [
-    "./src/**/*.ts",
+    "./src/**/*.ts"
+  ],
+  htmlFiles: [
+    "./src/**/*.html"
   ],
   tsOut: "./tsout"
 }
@@ -57,7 +61,7 @@ gulp.task("app:systemjs", function(cb) {
 
 gulp.task("app:html", function() {
   return gulp
-    .src("./src/**/*.html")
+    .src(config.htmlFiles)
     .pipe(gulp.dest(config.dist))
 })
 
@@ -114,7 +118,7 @@ gulp.task("vendor", ["vendor:globals", "vendor:systemjs"], function() {
  * Main Tasks
  */
 
-gulp.task("default", ["typescript", "vendor"], function() {
+gulp.task("default", ["app", "vendor"], function() {
 
 })
 
@@ -122,15 +126,20 @@ gulp.task("clean", function(cb) {
   del([config.dist, config.tsOut], cb)
 });
 
+gulp.task("dev", ["default"], function(cb) {
+  gulp.watch(config.tsFiles, ["app:js"])
+  gulp.watch(config.htmlFiles, ["app:html"])
+  watch(config.dist)
+    .pipe(connect.reload());
 
-gulp.task("connect", function() {
-    connect
-      .server({
-        root: "./dist",
-        port: 8080,
-        host: "0.0.0.0",
-        middleware: function(connect, opt) {
-          return [ history() ];
-        }
-      })
-});
+  connect
+    .server({
+      root: "./dist",
+      port: 8080,
+      host: "0.0.0.0",
+      livereload: true,
+      middleware: function(connect, opt) {
+        return [ history() ];
+      }
+    })
+})
