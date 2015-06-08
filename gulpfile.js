@@ -6,6 +6,8 @@ var connect = require('gulp-connect');
 var Builder = require('systemjs-builder');
 var runSequence = require('run-sequence');
 var concat = require('gulp-concat');
+var mergeStream = require('merge-stream');
+var history = require('connect-history-api-fallback');
 
 var tsProject = ts.createProject("tsconfig.json", {
   typescript: require("typescript")
@@ -90,15 +92,18 @@ gulp.task("vendor:systemjs", ["app:ts"], function(cb) {
  });
 
 gulp.task("vendor:globals", function() {
-  gulp.src([
+  var globals = gulp.src([
     "jspm_packages/system.js",
-    "jspm_packages/es6-module-loader.js",
     "./jspm_packages/github/jmcriffey/bower-traceur-runtime@0.0.88/traceur-runtime.js",
     "./jspm_packages/npm/reflect-metadata@0.1.0/Reflect.js",
     "./jspm_packages/github/moment/moment@2.10.3/moment.js"
   ])
-  .pipe(concat("globals.js"))
-  .pipe(gulp.dest("dist/js"));
+  .pipe(concat("globals.js"));
+
+  var moduleLoader = gulp.src("jspm_packages/es6-module-loader.js")
+
+  return mergeStream(globals, moduleLoader)
+    .pipe(gulp.dest("dist/js"));
 })
 
 gulp.task("vendor", ["vendor:globals", "vendor:systemjs"], function() {
@@ -119,9 +124,13 @@ gulp.task("clean", function(cb) {
 
 
 gulp.task("connect", function() {
-    connect.server({
+    connect
+      .server({
         root: "./dist",
         port: 8080,
-        host: "0.0.0.0"
-    })
+        host: "0.0.0.0",
+        middleware: function(connect, opt) {
+          return [ history() ];
+        }
+      })
 });
