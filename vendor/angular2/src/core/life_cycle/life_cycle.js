@@ -68,7 +68,8 @@ var LifeCycle = (function () {
      *
      *  In development mode, `tick()` also performs a second change detection cycle to ensure that no
      * further
-     *  changes are detected. If additional changes are picked up during this second cycle, bindings in
+     *  changes are detected. If additional changes are picked up during this second cycle, bindings
+     * in
      * the app have
      *  side-effects that cannot be resolved in a single change detection pass. In this case, Angular
      * throws an error,

@@ -82,14 +82,16 @@ export declare class DirectiveMetadata {
     hostProperties: Map<string, string>;
     hostAttributes: Map<string, string>;
     hostActions: Map<string, string>;
-    properties: Map<string, string>;
+    properties: List<string>;
     readAttributes: List<string>;
     type: number;
     callOnDestroy: boolean;
     callOnChange: boolean;
+    callOnCheck: boolean;
+    callOnInit: boolean;
     callOnAllChangesDone: boolean;
     changeDetection: string;
-    constructor({id, selector, compileChildren, events, hostListeners, hostProperties, hostAttributes, hostActions, properties, readAttributes, type, callOnDestroy, callOnChange, callOnAllChangesDone, changeDetection}: {
+    constructor({id, selector, compileChildren, events, hostListeners, hostProperties, hostAttributes, hostActions, properties, readAttributes, type, callOnDestroy, callOnChange, callOnCheck, callOnInit, callOnAllChangesDone, changeDetection}: {
         id?: string;
         selector?: string;
         compileChildren?: boolean;
@@ -98,11 +100,13 @@ export declare class DirectiveMetadata {
         hostProperties?: Map<string, string>;
         hostAttributes?: Map<string, string>;
         hostActions?: Map<string, string>;
-        properties?: Map<string, string>;
+        properties?: List<string>;
         readAttributes?: List<string>;
         type?: number;
         callOnDestroy?: boolean;
         callOnChange?: boolean;
+        callOnCheck?: boolean;
+        callOnInit?: boolean;
         callOnAllChangesDone?: boolean;
         changeDetection?: string;
     });
@@ -146,9 +150,9 @@ export declare class Renderer {
      */
     createRootHostView(hostProtoViewRef: RenderProtoViewRef, hostElementSelector: string): RenderViewRef;
     /**
-     * Detaches a free host view's element from the DOM.
+     * Detaches a free view's element from the DOM.
      */
-    detachFreeHostView(parentHostViewRef: RenderViewRef, hostViewRef: RenderViewRef): void;
+    detachFreeView(view: RenderViewRef): void;
     /**
      * Creates a regular view out of the given ProtoView
      */

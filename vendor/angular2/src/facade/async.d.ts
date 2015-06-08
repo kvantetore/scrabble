@@ -4,8 +4,8 @@ export declare class PromiseWrapper {
     static resolve(obj: any): Promise<any>;
     static reject(obj: any, _: any): Promise<any>;
     static catchError<T>(promise: Promise<T>, onError: (error: any) => T | Thenable<T>): Promise<T>;
-    static all(promises: List<Promise<any>>): Promise<any>;
-    static then<T>(promise: Promise<T>, success: (value: any) => T | Thenable<T>, rejection: (error: any, stack?: any) => T | Thenable<T>): Promise<T>;
+    static all(promises: List<any>): Promise<any>;
+    static then<T>(promise: Promise<T>, success: (value: any) => T | Thenable<T>, rejection?: (error: any, stack?: any) => T | Thenable<T>): Promise<T>;
     static completer(): {
         promise: any;
         resolve: any;

@@ -56,18 +56,29 @@ var BindingRecordsCreator = (function () {
         });
     };
     BindingRecordsCreator.prototype._createDirectiveRecords = function (bindings, boundElementIndex, directiveBinders, allDirectiveMetadatas) {
-        var _this = this;
         for (var i = 0; i < directiveBinders.length; i++) {
             var directiveBinder = directiveBinders[i];
             var directiveMetadata = allDirectiveMetadatas[directiveBinder.directiveIndex];
+            var directiveRecord = this._getDirectiveRecord(boundElementIndex, i, directiveMetadata);
             // directive properties
             collection_1.MapWrapper.forEach(directiveBinder.propertyBindings, function (astWithSource, propertyName) {
                 // TODO: these setters should eventually be created by change detection, to make
                 // it monomorphic!
                 var setter = reflection_1.reflector.setter(propertyName);
-                var directiveRecord = _this._getDirectiveRecord(boundElementIndex, i, directiveMetadata);
                 collection_1.ListWrapper.push(bindings, change_detection_1.BindingRecord.createForDirective(astWithSource, propertyName, setter, directiveRecord));
             });
+            if (directiveRecord.callOnChange) {
+                collection_1.ListWrapper.push(bindings, change_detection_1.BindingRecord.createDirectiveOnChange(directiveRecord));
+            }
+            if (directiveRecord.callOnInit) {
+                collection_1.ListWrapper.push(bindings, change_detection_1.BindingRecord.createDirectiveOnInit(directiveRecord));
+            }
+            if (directiveRecord.callOnCheck) {
+                collection_1.ListWrapper.push(bindings, change_detection_1.BindingRecord.createDirectiveOnCheck(directiveRecord));
+            }
+        }
+        for (var i = 0; i < directiveBinders.length; i++) {
+            var directiveBinder = directiveBinders[i];
             // host properties
             collection_1.MapWrapper.forEach(directiveBinder.hostPropertyBindings, function (astWithSource, propertyName) {
                 var dirIndex = new change_detection_1.DirectiveIndex(boundElementIndex, i);
@@ -78,8 +89,14 @@ var BindingRecordsCreator = (function () {
     BindingRecordsCreator.prototype._getDirectiveRecord = function (boundElementIndex, directiveIndex, directiveMetadata) {
         var id = boundElementIndex * 100 + directiveIndex;
         if (!collection_1.MapWrapper.contains(this._directiveRecordsMap, id)) {
-            var changeDetection = directiveMetadata.changeDetection;
-            collection_1.MapWrapper.set(this._directiveRecordsMap, id, new change_detection_1.DirectiveRecord(new change_detection_1.DirectiveIndex(boundElementIndex, directiveIndex), directiveMetadata.callOnAllChangesDone, directiveMetadata.callOnChange, changeDetection));
+            collection_1.MapWrapper.set(this._directiveRecordsMap, id, new change_detection_1.DirectiveRecord({
+                directiveIndex: new change_detection_1.DirectiveIndex(boundElementIndex, directiveIndex),
+                callOnAllChangesDone: directiveMetadata.callOnAllChangesDone,
+                callOnChange: directiveMetadata.callOnChange,
+                callOnCheck: directiveMetadata.callOnCheck,
+                callOnInit: directiveMetadata.callOnInit,
+                changeDetection: directiveMetadata.changeDetection
+            }));
         }
         return collection_1.MapWrapper.get(this._directiveRecordsMap, id);
     };

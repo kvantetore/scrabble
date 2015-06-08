@@ -15,8 +15,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 var di_1 = require('angular2/di');
 var collection_1 = require('angular2/src/facade/collection');
 var lang_1 = require('angular2/src/facade/lang');
-// TODO(tbosch): Make this an OpaqueToken as soon as our transpiler supports this!
-exports.APP_VIEW_POOL_CAPACITY = 'AppViewPool.viewPoolCapacity';
+exports.APP_VIEW_POOL_CAPACITY = lang_1.CONST_EXPR(new di_1.OpaqueToken('AppViewPool.viewPoolCapacity'));
 var AppViewPool = (function () {
     function AppViewPool(poolCapacityPerProtoView) {
         this._poolCapacityPerProtoView = poolCapacityPerProtoView;
@@ -36,11 +35,14 @@ var AppViewPool = (function () {
             pooledViews = [];
             collection_1.MapWrapper.set(this._pooledViewsPerProtoView, protoView, pooledViews);
         }
-        if (pooledViews.length < this._poolCapacityPerProtoView) {
+        var haveRemainingCapacity = pooledViews.length < this._poolCapacityPerProtoView;
+        if (haveRemainingCapacity) {
             collection_1.ListWrapper.push(pooledViews, view);
         }
+        return haveRemainingCapacity;
     };
     AppViewPool = __decorate([
+        di_1.Injectable(),
         __param(0, di_1.Inject(exports.APP_VIEW_POOL_CAPACITY)), 
         __metadata('design:paramtypes', [Object])
     ], AppViewPool);

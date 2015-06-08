@@ -242,7 +242,12 @@ var BindingBuilder = (function () {
      * expect(injectorClass.get(Vehicle) instanceof Car).toBe(true);
      * ```
      */
-    BindingBuilder.prototype.toAlias = function (aliasToken) { return new Binding(this.token, { toAlias: aliasToken }); };
+    BindingBuilder.prototype.toAlias = function (aliasToken) {
+        if (lang_1.isBlank(aliasToken)) {
+            throw new lang_1.BaseException("Can not alias " + lang_1.stringify(this.token) + " to a blank value!");
+        }
+        return new Binding(this.token, { toAlias: aliasToken });
+    };
     /**
      * Binds a key to a function which computes the value.
      *
@@ -250,8 +255,8 @@ var BindingBuilder = (function () {
      *
      * ```javascript
      * var injector = Injector.resolveAndCreate([
-     *   bind(Number).toFactory(() => { return 1+2; }}),
-     *   bind(String).toFactory((v) => { return "Value: " + v; }, [Number] })
+     *   bind(Number).toFactory(() => { return 1+2; }),
+     *   bind(String).toFactory((v) => { return "Value: " + v; }, [Number])
      * ]);
      *
      * expect(injector.get(Number)).toEqual(3);

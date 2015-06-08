@@ -7,6 +7,7 @@ export declare class ReflectionCapabilities {
     _zipTypesAndAnnotaions(paramTypes: any, paramAnnotations: any): List<List<any>>;
     parameters(typeOfFunc: any): List<List<any>>;
     annotations(typeOfFunc: any): List<any>;
+    interfaces(type: any): List<any>;
     getter(name: string): GetterFn;
     setter(name: string): SetterFn;
     method(name: string): MethodFn;

@@ -123,6 +123,23 @@ var AccessMember = (function (_super) {
     return AccessMember;
 })(AST);
 exports.AccessMember = AccessMember;
+var SafeAccessMember = (function (_super) {
+    __extends(SafeAccessMember, _super);
+    function SafeAccessMember(receiver, name, getter, setter) {
+        _super.call(this);
+        this.receiver = receiver;
+        this.name = name;
+        this.getter = getter;
+        this.setter = setter;
+    }
+    SafeAccessMember.prototype.eval = function (context, locals) {
+        var evaluatedReceiver = this.receiver.eval(context, locals);
+        return lang_1.isBlank(evaluatedReceiver) ? null : this.getter(evaluatedReceiver);
+    };
+    SafeAccessMember.prototype.visit = function (visitor) { return visitor.visitSafeAccessMember(this); };
+    return SafeAccessMember;
+})(AST);
+exports.SafeAccessMember = SafeAccessMember;
 var KeyedAccess = (function (_super) {
     __extends(KeyedAccess, _super);
     function KeyedAccess(obj, key) {
@@ -322,6 +339,26 @@ var MethodCall = (function (_super) {
     return MethodCall;
 })(AST);
 exports.MethodCall = MethodCall;
+var SafeMethodCall = (function (_super) {
+    __extends(SafeMethodCall, _super);
+    function SafeMethodCall(receiver, name, fn, args) {
+        _super.call(this);
+        this.receiver = receiver;
+        this.name = name;
+        this.fn = fn;
+        this.args = args;
+    }
+    SafeMethodCall.prototype.eval = function (context, locals) {
+        var evaluatedReceiver = this.receiver.eval(context, locals);
+        if (lang_1.isBlank(evaluatedReceiver))
+            return null;
+        var evaluatedArgs = evalList(context, locals, this.args);
+        return this.fn(evaluatedReceiver, evaluatedArgs);
+    };
+    SafeMethodCall.prototype.visit = function (visitor) { return visitor.visitSafeMethodCall(this); };
+    return SafeMethodCall;
+})(AST);
+exports.SafeMethodCall = SafeMethodCall;
 var FunctionCall = (function (_super) {
     __extends(FunctionCall, _super);
     function FunctionCall(target, args) {
@@ -388,6 +425,8 @@ var AstVisitor = (function () {
     AstVisitor.prototype.visitLiteralPrimitive = function (ast) { };
     AstVisitor.prototype.visitMethodCall = function (ast) { };
     AstVisitor.prototype.visitPrefixNot = function (ast) { };
+    AstVisitor.prototype.visitSafeAccessMember = function (ast) { };
+    AstVisitor.prototype.visitSafeMethodCall = function (ast) { };
     return AstVisitor;
 })();
 exports.AstVisitor = AstVisitor;
@@ -402,8 +441,14 @@ var AstTransformer = (function () {
     AstTransformer.prototype.visitAccessMember = function (ast) {
         return new AccessMember(ast.receiver.visit(this), ast.name, ast.getter, ast.setter);
     };
+    AstTransformer.prototype.visitSafeAccessMember = function (ast) {
+        return new SafeAccessMember(ast.receiver.visit(this), ast.name, ast.getter, ast.setter);
+    };
     AstTransformer.prototype.visitMethodCall = function (ast) {
         return new MethodCall(ast.receiver.visit(this), ast.name, ast.fn, this.visitAll(ast.args));
+    };
+    AstTransformer.prototype.visitSafeMethodCall = function (ast) {
+        return new SafeMethodCall(ast.receiver.visit(this), ast.name, ast.fn, this.visitAll(ast.args));
     };
     AstTransformer.prototype.visitFunctionCall = function (ast) {
         return new FunctionCall(ast.target.visit(this), this.visitAll(ast.args));
@@ -444,7 +489,7 @@ var _evalListCache = [
     [0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0]
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 ];
 function evalList(context, locals, exps) {
     var length = exps.length;

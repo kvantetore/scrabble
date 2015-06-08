@@ -16,7 +16,7 @@ export declare class DirectiveParser implements CompileStep {
     constructor(parser: Parser, directives: List<DirectiveMetadata>);
     _ensureComponentOnlyHasElementSelector(selector: any, directive: any): void;
     process(parent: CompileElement, current: CompileElement, control: CompileControl): void;
-    _bindDirectiveProperty(dirProperty: string, bindConfig: string, compileElement: CompileElement, directiveBinderBuilder: DirectiveBuilder): void;
+    _bindDirectiveProperty(bindConfig: string, compileElement: CompileElement, directiveBinderBuilder: DirectiveBuilder): void;
     _bindDirectiveEvent(eventName: any, action: any, compileElement: any, directiveBinderBuilder: any): void;
     _bindHostAction(actionName: any, actionExpression: any, compileElement: any, directiveBinderBuilder: any): void;
     _bindHostProperty(hostPropertyName: any, directivePropertyName: any, compileElement: any, directiveBinderBuilder: any): void;

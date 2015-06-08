@@ -6,6 +6,7 @@ var AppViewContainer = (function () {
     function AppViewContainer() {
         // The order in this list matches the DOM order.
         this.views = [];
+        this.freeViews = [];
     }
     return AppViewContainer;
 })();

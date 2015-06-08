@@ -10,9 +10,11 @@ export declare class DomProtoView {
     elementBinders: List<ElementBinder>;
     isTemplateElement: boolean;
     rootBindingOffset: number;
-    constructor({elementBinders, element}: {
+    transitiveContentTagCount: number;
+    constructor({elementBinders, element, transitiveContentTagCount}: {
         elementBinders: any;
         element: any;
+        transitiveContentTagCount: any;
     });
 }
 export declare var __esModule: boolean;

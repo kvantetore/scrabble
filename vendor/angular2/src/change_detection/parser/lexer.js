@@ -212,15 +212,15 @@ var _Scanner = (function () {
             case exports.$DQ:
                 return this.scanString();
             case exports.$HASH:
-                return this.scanOperator(start, lang_1.StringWrapper.fromCharCode(peek));
             case exports.$PLUS:
             case exports.$MINUS:
             case exports.$STAR:
             case exports.$SLASH:
             case exports.$PERCENT:
             case $CARET:
-            case exports.$QUESTION:
                 return this.scanOperator(start, lang_1.StringWrapper.fromCharCode(peek));
+            case exports.$QUESTION:
+                return this.scanComplexOperator(start, exports.$PERIOD, '?', '.');
             case exports.$LT:
             case exports.$GT:
             case exports.$BANG:
@@ -417,7 +417,8 @@ var OPERATORS = collection_1.SetWrapper.createFromList([
     '|',
     '!',
     '?',
-    '#'
+    '#',
+    '?.'
 ]);
 var KEYWORDS = collection_1.SetWrapper.createFromList(['var', 'null', 'undefined', 'true', 'false']);
 exports.__esModule = true;

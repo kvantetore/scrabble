@@ -16,7 +16,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var lang_1 = require('angular2/src/facade/lang');
-var collection_1 = require('angular2/src/facade/collection');
 var annotations_impl_1 = require('angular2/src/di/annotations_impl');
 var change_detection_1 = require('angular2/change_detection');
 // type StringMap = {[idx: string]: string};
@@ -84,8 +83,8 @@ var change_detection_1 = require('angular2/change_detection');
  *
  * To inject element-specific special objects, declare the constructor parameter as:
  * - `element: ElementRef` to obtain a reference to logical element in the view.
- * - `viewContainer: ViewContainerRef` to control child template instantiation, for {@link
- * Directive} directives only
+ * - `viewContainer: ViewContainerRef` to control child template instantiation, for
+ * {@link Directive} directives only
  * - `bindingPropagation: BindingPropagation` to control change detection in a more granular way.
  *
  * ## Example
@@ -118,9 +117,9 @@ var change_detection_1 = require('angular2/change_detection');
  *
  * @Directive({
  *   selector: '[dependency]',
- *   properties: {
- *     'id':'dependency'
- *   }
+ *   properties: [
+ *     'id: dependency'
+ *   ]
  * })
  * class Dependency {
  *   id:string;
@@ -228,11 +227,10 @@ var change_detection_1 = require('angular2/change_detection');
  *
  *
  * A directive can also query for other child directives. Since parent directives are instantiated
- * before child
- * directives, a directive can't simply inject the list of child directives. Instead, the directive
- * injects a {@link QueryList}, which updates its contents as children are added, removed, or moved
- * by a directive
- * that uses a {@link ViewContainerRef} such as a `for`, an `if`, or a `switch`.
+ * before child directives, a directive can't simply inject the list of child directives. Instead,
+ * the directive injects a {@link QueryList}, which updates its contents as children are added,
+ * removed, or moved by a directive that uses a {@link ViewContainerRef} such as a `ng-for`, an
+ * `ng-if`, or an `ng-switch`.
  *
  * ```
  * @Directive({ selector: '[my-directive]' })
@@ -243,8 +241,7 @@ var change_detection_1 = require('angular2/change_detection');
  * ```
  *
  * This directive would be instantiated with a {@link QueryList} which contains `Dependency` 4 and
- * 6. Here, `Dependency`
- * 5 would not be included, because it is not a direct child.
+ * 6. Here, `Dependency` 5 would not be included, because it is not a direct child.
  *
  * ### Injecting a live collection of descendant directives
  *
@@ -290,9 +287,9 @@ var change_detection_1 = require('angular2/change_detection');
  * ```
  * @Directive({
  *   selector: '[tooltip]',
- *   properties: {
- *     'text': 'tooltip'
- *   },
+ *   properties: [
+ *     'text: tooltip'
+ *   ],
  *   hostListeners: {
  *     'onmouseenter': 'onMouseEnter()',
  *     'onmouseleave': 'onMouseLeave()'
@@ -376,9 +373,7 @@ var change_detection_1 = require('angular2/change_detection');
  * ```
  * @Directive({
  *   selector: '[unless]',
- *   properties: {
- *     'unless': 'unless'
- *   }
+ *   properties: ['unless']
  * })
  * export class Unless {
  *   viewContainer: ViewContainerRef;
@@ -444,14 +439,6 @@ var Directive = (function (_super) {
         this.compileChildren = compileChildren;
         this.hostInjector = hostInjector;
     }
-    /**
-     * Returns true if a directive participates in a given `LifecycleEvent`.
-     *
-     * See {@link onChange}, {@link onDestroy}, {@link onAllChangesDone} for details.
-     */
-    Directive.prototype.hasLifecycleHook = function (hook) {
-        return lang_1.isPresent(this.lifecycle) ? collection_1.ListWrapper.contains(this.lifecycle, hook) : false;
-    };
     Directive = __decorate([
         lang_1.CONST(), 
         __metadata('design:paramtypes', [Object])
@@ -470,8 +457,8 @@ exports.Directive = Directive;
  * When a component is instantiated, Angular
  * - creates a shadow DOM for the component.
  * - loads the selected template into the shadow DOM.
- * - creates a child {@link Injector} which is configured with the `appInjector` for the {@link
- * Component}.
+ * - creates a child {@link Injector} which is configured with the `appInjector` for the
+ * {@link Component}.
  *
  * All template expressions and statements are then evaluated against the component instance.
  *
@@ -616,10 +603,10 @@ exports.onDestroy = lang_1.CONST_EXPR(new LifecycleEvent("onDestroy"));
  * ```
  * @Directive({
  *   selector: '[class-set]',
- *   properties: {
- *     'propA': 'propA'
- *     'propB': 'propB'
- *   },
+ *   properties: [
+ *     'propA',
+ *     'propB'
+ *   ],
  *   lifecycle: [onChange]
  * })
  * class ClassSet {
@@ -639,6 +626,52 @@ exports.onDestroy = lang_1.CONST_EXPR(new LifecycleEvent("onDestroy"));
  * @exportedAs angular2/annotations
  */
 exports.onChange = lang_1.CONST_EXPR(new LifecycleEvent("onChange"));
+/**
+ * Notify a directive when it has been checked.
+ *
+ * This method is called right after the directive's bindings have been checked,
+ * and before any of its children's bindings have been checked.
+ *
+ * It is invoked every time even when none of the directive's bindings has changed.
+ *
+ * ## Example:
+ *
+ * ```
+ * @Directive({
+ *   selector: '[class-set]',
+ *   lifecycle: [onCheck]
+ * })
+ * class ClassSet {
+ *   onCheck() {
+ *   }
+ * }
+ *  ```
+ * @exportedAs angular2/annotations
+ */
+exports.onCheck = lang_1.CONST_EXPR(new LifecycleEvent("onCheck"));
+/**
+ * Notify a directive when it has been checked the first itme.
+ *
+ * This method is called right after the directive's bindings have been checked,
+ * and before any of its children's bindings have been checked.
+ *
+ * It is invoked only once.
+ *
+ * ## Example:
+ *
+ * ```
+ * @Directive({
+ *   selector: '[class-set]',
+ *   lifecycle: [onInit]
+ * })
+ * class ClassSet {
+ *   onInit() {
+ *   }
+ * }
+ *  ```
+ * @exportedAs angular2/annotations
+ */
+exports.onInit = lang_1.CONST_EXPR(new LifecycleEvent("onInit"));
 /**
  * Notify a directive when the bindings of all its children have been changed.
  *

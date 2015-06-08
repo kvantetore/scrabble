@@ -15,12 +15,14 @@ var view_container_ref_1 = require('./view_container_ref');
 var element_ref_1 = require('./element_ref');
 var view_ref_1 = require('./view_ref');
 var annotations_1 = require('angular2/src/core/annotations_impl/annotations');
+var directive_lifecycle_reflector_1 = require('./directive_lifecycle_reflector');
 var change_detection_1 = require('angular2/change_detection');
 var query_list_1 = require('./query_list');
 var reflection_1 = require('angular2/src/reflection/reflection');
 var api_1 = require('angular2/src/render/api');
+// Threshold for the dynamic version
 var _MAX_DIRECTIVE_CONSTRUCTION_COUNTER = 10;
-var _undefined = new Object();
+var _undefined = lang_1.CONST_EXPR(new Object());
 var _staticKeys;
 var StaticKeys = (function () {
     function StaticKeys() {
@@ -299,11 +301,13 @@ var DirectiveBinding = (function (_super) {
             hostAttributes: lang_1.isPresent(ann.hostAttributes) ? collection_1.MapWrapper.createFromStringMap(ann.hostAttributes) : null,
             hostActions: lang_1.isPresent(ann.hostActions) ? collection_1.MapWrapper.createFromStringMap(ann.hostActions) :
                 null,
-            properties: lang_1.isPresent(ann.properties) ? collection_1.MapWrapper.createFromStringMap(ann.properties) : null,
+            properties: ann.properties,
             readAttributes: DirectiveBinding._readAttributes(deps),
-            callOnDestroy: ann.hasLifecycleHook(annotations_1.onDestroy),
-            callOnChange: ann.hasLifecycleHook(annotations_1.onChange),
-            callOnAllChangesDone: ann.hasLifecycleHook(annotations_1.onAllChangesDone),
+            callOnDestroy: directive_lifecycle_reflector_1.hasLifecycleHook(annotations_1.onDestroy, rb.key.token, ann),
+            callOnChange: directive_lifecycle_reflector_1.hasLifecycleHook(annotations_1.onChange, rb.key.token, ann),
+            callOnCheck: directive_lifecycle_reflector_1.hasLifecycleHook(annotations_1.onCheck, rb.key.token, ann),
+            callOnInit: directive_lifecycle_reflector_1.hasLifecycleHook(annotations_1.onInit, rb.key.token, ann),
+            callOnAllChangesDone: directive_lifecycle_reflector_1.hasLifecycleHook(annotations_1.onAllChangesDone, rb.key.token, ann),
             changeDetection: ann instanceof
                 annotations_1.Component ? ann.changeDetection : null
         });
@@ -410,119 +414,19 @@ ElementInjector:
 http://www.williambrownstreet.net/blog/2014/04/faster-angularjs-rendering-angularjs-and-reactjs/
  */
 var ProtoElementInjector = (function () {
-    function ProtoElementInjector(parent, index, bd, distanceToParent, firstBindingIsComponent) {
+    function ProtoElementInjector(parent, index, bd, distanceToParent, _firstBindingIsComponent) {
         this.parent = parent;
         this.index = index;
         this.distanceToParent = distanceToParent;
+        this._firstBindingIsComponent = _firstBindingIsComponent;
         this.exportComponent = false;
         this.exportElement = false;
-        this._firstBindingIsComponent = firstBindingIsComponent;
-        this._binding0 = null;
-        this._keyId0 = null;
-        this._visibility0 = null;
-        this._binding1 = null;
-        this._keyId1 = null;
-        this._visibility1 = null;
-        this._binding2 = null;
-        this._keyId2 = null;
-        this._visibility2 = null;
-        this._binding3 = null;
-        this._keyId3 = null;
-        this._visibility3 = null;
-        this._binding4 = null;
-        this._keyId4 = null;
-        this._visibility4 = null;
-        this._binding5 = null;
-        this._keyId5 = null;
-        this._visibility5 = null;
-        this._binding6 = null;
-        this._keyId6 = null;
-        this._visibility6 = null;
-        this._binding7 = null;
-        this._keyId7 = null;
-        this._visibility7 = null;
-        this._binding8 = null;
-        this._keyId8 = null;
-        this._visibility8 = null;
-        this._binding9 = null;
-        this._keyId9 = null;
-        this._visibility9 = null;
         var length = bd.length;
         this.eventEmitterAccessors = collection_1.ListWrapper.createFixedSize(length);
         this.hostActionAccessors = collection_1.ListWrapper.createFixedSize(length);
-        if (length > 0) {
-            this._binding0 = bd[0].binding;
-            this._keyId0 = bd[0].getKeyId();
-            this._visibility0 = bd[0].visibility;
-            this.eventEmitterAccessors[0] = bd[0].createEventEmitterAccessors();
-            this.hostActionAccessors[0] = bd[0].createHostActionAccessors();
-        }
-        if (length > 1) {
-            this._binding1 = bd[1].binding;
-            this._keyId1 = bd[1].getKeyId();
-            this._visibility1 = bd[1].visibility;
-            this.eventEmitterAccessors[1] = bd[1].createEventEmitterAccessors();
-            this.hostActionAccessors[1] = bd[1].createHostActionAccessors();
-        }
-        if (length > 2) {
-            this._binding2 = bd[2].binding;
-            this._keyId2 = bd[2].getKeyId();
-            this._visibility2 = bd[2].visibility;
-            this.eventEmitterAccessors[2] = bd[2].createEventEmitterAccessors();
-            this.hostActionAccessors[2] = bd[2].createHostActionAccessors();
-        }
-        if (length > 3) {
-            this._binding3 = bd[3].binding;
-            this._keyId3 = bd[3].getKeyId();
-            this._visibility3 = bd[3].visibility;
-            this.eventEmitterAccessors[3] = bd[3].createEventEmitterAccessors();
-            this.hostActionAccessors[3] = bd[3].createHostActionAccessors();
-        }
-        if (length > 4) {
-            this._binding4 = bd[4].binding;
-            this._keyId4 = bd[4].getKeyId();
-            this._visibility4 = bd[4].visibility;
-            this.eventEmitterAccessors[4] = bd[4].createEventEmitterAccessors();
-            this.hostActionAccessors[4] = bd[4].createHostActionAccessors();
-        }
-        if (length > 5) {
-            this._binding5 = bd[5].binding;
-            this._keyId5 = bd[5].getKeyId();
-            this._visibility5 = bd[5].visibility;
-            this.eventEmitterAccessors[5] = bd[5].createEventEmitterAccessors();
-            this.hostActionAccessors[5] = bd[5].createHostActionAccessors();
-        }
-        if (length > 6) {
-            this._binding6 = bd[6].binding;
-            this._keyId6 = bd[6].getKeyId();
-            this._visibility6 = bd[6].visibility;
-            this.eventEmitterAccessors[6] = bd[6].createEventEmitterAccessors();
-            this.hostActionAccessors[6] = bd[6].createHostActionAccessors();
-        }
-        if (length > 7) {
-            this._binding7 = bd[7].binding;
-            this._keyId7 = bd[7].getKeyId();
-            this._visibility7 = bd[7].visibility;
-            this.eventEmitterAccessors[7] = bd[7].createEventEmitterAccessors();
-            this.hostActionAccessors[7] = bd[7].createHostActionAccessors();
-        }
-        if (length > 8) {
-            this._binding8 = bd[8].binding;
-            this._keyId8 = bd[8].getKeyId();
-            this._visibility8 = bd[8].visibility;
-            this.eventEmitterAccessors[8] = bd[8].createEventEmitterAccessors();
-            this.hostActionAccessors[8] = bd[8].createHostActionAccessors();
-        }
-        if (length > 9) {
-            this._binding9 = bd[9].binding;
-            this._keyId9 = bd[9].getKeyId();
-            this._visibility9 = bd[9].visibility;
-            this.eventEmitterAccessors[9] = bd[9].createEventEmitterAccessors();
-            this.hostActionAccessors[9] = bd[9].createHostActionAccessors();
-        }
-        if (length > 10) {
-            throw 'Maximum number of directives per element has been reached.';
-        }
+        this._strategy = length > _MAX_DIRECTIVE_CONSTRUCTION_COUNTER ?
+            new _ProtoElementInjectorDynamicStrategy(this, bd) :
+            new _ProtoElementInjectorInlineStrategy(this, bd);
     }
     ProtoElementInjector.create = function (parent, index, bindings, firstBindingIsComponent, distanceToParent) {
         var bd = [];
@@ -564,11 +468,125 @@ var ProtoElementInjector = (function () {
     };
     ProtoElementInjector.prototype.directParent = function () { return this.distanceToParent < 2 ? this.parent : null; };
     Object.defineProperty(ProtoElementInjector.prototype, "hasBindings", {
-        get: function () { return lang_1.isPresent(this._binding0); },
+        get: function () { return this._strategy.hasBindings(); },
         enumerable: true,
         configurable: true
     });
-    ProtoElementInjector.prototype.getBindingAtIndex = function (index) {
+    ProtoElementInjector.prototype.getBindingAtIndex = function (index) { return this._strategy.getBindingAtIndex(index); };
+    return ProtoElementInjector;
+})();
+exports.ProtoElementInjector = ProtoElementInjector;
+/**
+ * Strategy used by the `ProtoElementInjector` when the number of bindings is 10 or less.
+ * In such a case, inlining fields is benefitial for performances.
+ */
+var _ProtoElementInjectorInlineStrategy = (function () {
+    function _ProtoElementInjectorInlineStrategy(protoEI, bd) {
+        // only _binding0 can contain a component
+        this._binding0 = null;
+        this._binding1 = null;
+        this._binding2 = null;
+        this._binding3 = null;
+        this._binding4 = null;
+        this._binding5 = null;
+        this._binding6 = null;
+        this._binding7 = null;
+        this._binding8 = null;
+        this._binding9 = null;
+        this._keyId0 = null;
+        this._keyId1 = null;
+        this._keyId2 = null;
+        this._keyId3 = null;
+        this._keyId4 = null;
+        this._keyId5 = null;
+        this._keyId6 = null;
+        this._keyId7 = null;
+        this._keyId8 = null;
+        this._keyId9 = null;
+        this._visibility0 = null;
+        this._visibility1 = null;
+        this._visibility2 = null;
+        this._visibility3 = null;
+        this._visibility4 = null;
+        this._visibility5 = null;
+        this._visibility6 = null;
+        this._visibility7 = null;
+        this._visibility8 = null;
+        this._visibility9 = null;
+        var length = bd.length;
+        if (length > 0) {
+            this._binding0 = bd[0].binding;
+            this._keyId0 = bd[0].getKeyId();
+            this._visibility0 = bd[0].visibility;
+            protoEI.eventEmitterAccessors[0] = bd[0].createEventEmitterAccessors();
+            protoEI.hostActionAccessors[0] = bd[0].createHostActionAccessors();
+        }
+        if (length > 1) {
+            this._binding1 = bd[1].binding;
+            this._keyId1 = bd[1].getKeyId();
+            this._visibility1 = bd[1].visibility;
+            protoEI.eventEmitterAccessors[1] = bd[1].createEventEmitterAccessors();
+            protoEI.hostActionAccessors[1] = bd[1].createHostActionAccessors();
+        }
+        if (length > 2) {
+            this._binding2 = bd[2].binding;
+            this._keyId2 = bd[2].getKeyId();
+            this._visibility2 = bd[2].visibility;
+            protoEI.eventEmitterAccessors[2] = bd[2].createEventEmitterAccessors();
+            protoEI.hostActionAccessors[2] = bd[2].createHostActionAccessors();
+        }
+        if (length > 3) {
+            this._binding3 = bd[3].binding;
+            this._keyId3 = bd[3].getKeyId();
+            this._visibility3 = bd[3].visibility;
+            protoEI.eventEmitterAccessors[3] = bd[3].createEventEmitterAccessors();
+            protoEI.hostActionAccessors[3] = bd[3].createHostActionAccessors();
+        }
+        if (length > 4) {
+            this._binding4 = bd[4].binding;
+            this._keyId4 = bd[4].getKeyId();
+            this._visibility4 = bd[4].visibility;
+            protoEI.eventEmitterAccessors[4] = bd[4].createEventEmitterAccessors();
+            protoEI.hostActionAccessors[4] = bd[4].createHostActionAccessors();
+        }
+        if (length > 5) {
+            this._binding5 = bd[5].binding;
+            this._keyId5 = bd[5].getKeyId();
+            this._visibility5 = bd[5].visibility;
+            protoEI.eventEmitterAccessors[5] = bd[5].createEventEmitterAccessors();
+            protoEI.hostActionAccessors[5] = bd[5].createHostActionAccessors();
+        }
+        if (length > 6) {
+            this._binding6 = bd[6].binding;
+            this._keyId6 = bd[6].getKeyId();
+            this._visibility6 = bd[6].visibility;
+            protoEI.eventEmitterAccessors[6] = bd[6].createEventEmitterAccessors();
+            protoEI.hostActionAccessors[6] = bd[6].createHostActionAccessors();
+        }
+        if (length > 7) {
+            this._binding7 = bd[7].binding;
+            this._keyId7 = bd[7].getKeyId();
+            this._visibility7 = bd[7].visibility;
+            protoEI.eventEmitterAccessors[7] = bd[7].createEventEmitterAccessors();
+            protoEI.hostActionAccessors[7] = bd[7].createHostActionAccessors();
+        }
+        if (length > 8) {
+            this._binding8 = bd[8].binding;
+            this._keyId8 = bd[8].getKeyId();
+            this._visibility8 = bd[8].visibility;
+            protoEI.eventEmitterAccessors[8] = bd[8].createEventEmitterAccessors();
+            protoEI.hostActionAccessors[8] = bd[8].createHostActionAccessors();
+        }
+        if (length > 9) {
+            this._binding9 = bd[9].binding;
+            this._keyId9 = bd[9].getKeyId();
+            this._visibility9 = bd[9].visibility;
+            protoEI.eventEmitterAccessors[9] = bd[9].createEventEmitterAccessors();
+            protoEI.hostActionAccessors[9] = bd[9].createHostActionAccessors();
+        }
+    }
+    _ProtoElementInjectorInlineStrategy.prototype.hasBindings = function () { return lang_1.isPresent(this._binding0); };
+    _ProtoElementInjectorInlineStrategy.prototype.getBindingAtIndex = function (index) {
         if (index == 0)
             return this._binding0;
         if (index == 1)
@@ -591,28 +609,50 @@ var ProtoElementInjector = (function () {
             return this._binding9;
         throw new OutOfBoundsAccess(index);
     };
-    return ProtoElementInjector;
+    _ProtoElementInjectorInlineStrategy.prototype.createElementInjectorStrategy = function (ei) {
+        return new ElementInjectorInlineStrategy(this, ei);
+    };
+    return _ProtoElementInjectorInlineStrategy;
 })();
-exports.ProtoElementInjector = ProtoElementInjector;
+/**
+ * Strategy used by the `ProtoElementInjector` when the number of bindings is more than 10.
+ */
+var _ProtoElementInjectorDynamicStrategy = (function () {
+    function _ProtoElementInjectorDynamicStrategy(protoInj, bd) {
+        var len = bd.length;
+        this._bindings = collection_1.ListWrapper.createFixedSize(len);
+        this._keyIds = collection_1.ListWrapper.createFixedSize(len);
+        this._visibilities = collection_1.ListWrapper.createFixedSize(len);
+        for (var i = 0; i < len; i++) {
+            this._bindings[i] = bd[i].binding;
+            this._keyIds[i] = bd[i].getKeyId();
+            this._visibilities[i] = bd[i].visibility;
+            protoInj.eventEmitterAccessors[i] = bd[i].createEventEmitterAccessors();
+            protoInj.hostActionAccessors[i] = bd[i].createHostActionAccessors();
+        }
+    }
+    _ProtoElementInjectorDynamicStrategy.prototype.hasBindings = function () { return lang_1.isPresent(this._bindings[0]); };
+    _ProtoElementInjectorDynamicStrategy.prototype.getBindingAtIndex = function (index) {
+        if (index < 0 || index >= this._bindings.length) {
+            throw new OutOfBoundsAccess(index);
+        }
+        return this._bindings[index];
+    };
+    _ProtoElementInjectorDynamicStrategy.prototype.createElementInjectorStrategy = function (ei) {
+        return new ElementInjectorDynamicStrategy(this, ei);
+    };
+    return _ProtoElementInjectorDynamicStrategy;
+})();
 var ElementInjector = (function (_super) {
     __extends(ElementInjector, _super);
-    function ElementInjector(proto, parent) {
+    function ElementInjector(_proto, parent) {
         _super.call(this, parent);
-        this._proto = proto;
-        // we cannot call dehydrate because fields won't be detected
-        this._preBuiltObjects = null;
+        this._proto = _proto;
         this._lightDomAppInjector = null;
         this._shadowDomAppInjector = null;
-        this._obj0 = null;
-        this._obj1 = null;
-        this._obj2 = null;
-        this._obj3 = null;
-        this._obj4 = null;
-        this._obj5 = null;
-        this._obj6 = null;
-        this._obj7 = null;
-        this._obj8 = null;
-        this._obj9 = null;
+        this._preBuiltObjects = null;
+        this._constructionCounter = 0;
+        this._strategy = _proto._strategy.createElementInjectorStrategy(this);
         this._constructionCounter = 0;
         this._inheritQueries(parent);
         this._buildQueries();
@@ -622,51 +662,12 @@ var ElementInjector = (function (_super) {
         this._preBuiltObjects = null;
         this._lightDomAppInjector = null;
         this._shadowDomAppInjector = null;
-        var p = this._proto;
-        if (p._binding0 instanceof DirectiveBinding && p._binding0.callOnDestroy) {
-            this._obj0.onDestroy();
-        }
-        if (p._binding1 instanceof DirectiveBinding && p._binding1.callOnDestroy) {
-            this._obj1.onDestroy();
-        }
-        if (p._binding2 instanceof DirectiveBinding && p._binding2.callOnDestroy) {
-            this._obj2.onDestroy();
-        }
-        if (p._binding3 instanceof DirectiveBinding && p._binding3.callOnDestroy) {
-            this._obj3.onDestroy();
-        }
-        if (p._binding4 instanceof DirectiveBinding && p._binding4.callOnDestroy) {
-            this._obj4.onDestroy();
-        }
-        if (p._binding5 instanceof DirectiveBinding && p._binding5.callOnDestroy) {
-            this._obj5.onDestroy();
-        }
-        if (p._binding6 instanceof DirectiveBinding && p._binding6.callOnDestroy) {
-            this._obj6.onDestroy();
-        }
-        if (p._binding7 instanceof DirectiveBinding && p._binding7.callOnDestroy) {
-            this._obj7.onDestroy();
-        }
-        if (p._binding8 instanceof DirectiveBinding && p._binding8.callOnDestroy) {
-            this._obj8.onDestroy();
-        }
-        if (p._binding9 instanceof DirectiveBinding && p._binding9.callOnDestroy) {
-            this._obj9.onDestroy();
-        }
+        this._strategy.callOnDestroy();
         if (lang_1.isPresent(this._dynamicallyCreatedComponentBinding) &&
             this._dynamicallyCreatedComponentBinding.callOnDestroy) {
             this._dynamicallyCreatedComponent.onDestroy();
         }
-        this._obj0 = null;
-        this._obj1 = null;
-        this._obj2 = null;
-        this._obj3 = null;
-        this._obj4 = null;
-        this._obj5 = null;
-        this._obj6 = null;
-        this._obj7 = null;
-        this._obj8 = null;
-        this._obj9 = null;
+        this._strategy.clearInstances();
         this._dynamicallyCreatedComponent = null;
         this._dynamicallyCreatedComponentBinding = null;
         this._constructionCounter = 0;
@@ -678,29 +679,10 @@ var ElementInjector = (function (_super) {
         this._preBuiltObjects = preBuiltObjects;
         if (p._firstBindingIsComponent) {
             this._shadowDomAppInjector =
-                this._createShadowDomAppInjector(p._binding0, injector);
+                this._createShadowDomAppInjector(this._strategy.getComponentBinding(), injector);
         }
         this._checkShadowDomAppInjector(this._shadowDomAppInjector);
-        if (lang_1.isPresent(p._keyId0))
-            this._getObjByKeyId(p._keyId0, LIGHT_DOM_AND_SHADOW_DOM);
-        if (lang_1.isPresent(p._keyId1))
-            this._getObjByKeyId(p._keyId1, LIGHT_DOM_AND_SHADOW_DOM);
-        if (lang_1.isPresent(p._keyId2))
-            this._getObjByKeyId(p._keyId2, LIGHT_DOM_AND_SHADOW_DOM);
-        if (lang_1.isPresent(p._keyId3))
-            this._getObjByKeyId(p._keyId3, LIGHT_DOM_AND_SHADOW_DOM);
-        if (lang_1.isPresent(p._keyId4))
-            this._getObjByKeyId(p._keyId4, LIGHT_DOM_AND_SHADOW_DOM);
-        if (lang_1.isPresent(p._keyId5))
-            this._getObjByKeyId(p._keyId5, LIGHT_DOM_AND_SHADOW_DOM);
-        if (lang_1.isPresent(p._keyId6))
-            this._getObjByKeyId(p._keyId6, LIGHT_DOM_AND_SHADOW_DOM);
-        if (lang_1.isPresent(p._keyId7))
-            this._getObjByKeyId(p._keyId7, LIGHT_DOM_AND_SHADOW_DOM);
-        if (lang_1.isPresent(p._keyId8))
-            this._getObjByKeyId(p._keyId8, LIGHT_DOM_AND_SHADOW_DOM);
-        if (lang_1.isPresent(p._keyId9))
-            this._getObjByKeyId(p._keyId9, LIGHT_DOM_AND_SHADOW_DOM);
+        this._strategy.hydrate();
     };
     ElementInjector.prototype._createShadowDomAppInjector = function (componentDirective, appInjector) {
         if (!collection_1.ListWrapper.isEmpty(componentDirective.resolvedAppInjectables)) {
@@ -736,11 +718,15 @@ var ElementInjector = (function (_super) {
             di_1.Key.get(token) === this._dynamicallyCreatedComponentBinding.key;
     };
     ElementInjector.prototype.hasDirective = function (type) {
-        return this._getObjByKeyId(di_1.Key.get(type).id, LIGHT_DOM_AND_SHADOW_DOM) !== _undefined;
+        return this._strategy.getObjByKeyId(di_1.Key.get(type).id, LIGHT_DOM_AND_SHADOW_DOM) !== _undefined;
     };
-    ElementInjector.prototype.getEventEmitterAccessors = function () { return this._proto.eventEmitterAccessors; };
-    ElementInjector.prototype.getHostActionAccessors = function () { return this._proto.hostActionAccessors; };
-    ElementInjector.prototype.getComponent = function () { return this._obj0; };
+    ElementInjector.prototype.getEventEmitterAccessors = function () {
+        return this._proto.eventEmitterAccessors;
+    };
+    ElementInjector.prototype.getHostActionAccessors = function () {
+        return this._proto.hostActionAccessors;
+    };
+    ElementInjector.prototype.getComponent = function () { return this._strategy.getComponent(); };
     ElementInjector.prototype.getElementRef = function () {
         return new element_ref_1.ElementRef(new view_ref_1.ViewRef(this._preBuiltObjects.view), this._proto.index);
     };
@@ -749,15 +735,13 @@ var ElementInjector = (function (_super) {
     };
     ElementInjector.prototype.getDynamicallyLoadedComponent = function () { return this._dynamicallyCreatedComponent; };
     ElementInjector.prototype.directParent = function () { return this._proto.distanceToParent < 2 ? this.parent : null; };
-    ElementInjector.prototype._isComponentKey = function (key) {
-        return this._proto._firstBindingIsComponent && lang_1.isPresent(key) && key.id === this._proto._keyId0;
-    };
+    ElementInjector.prototype._isComponentKey = function (key) { return this._strategy.isComponentKey(key); };
     ElementInjector.prototype._isDynamicallyLoadedComponentKey = function (key) {
         return lang_1.isPresent(this._dynamicallyCreatedComponentBinding) &&
             key.id === this._dynamicallyCreatedComponentBinding.key.id;
     };
     ElementInjector.prototype._new = function (binding) {
-        if (this._constructionCounter++ > _MAX_DIRECTIVE_CONSTRUCTION_COUNTER) {
+        if (this._constructionCounter++ > this._strategy.getMaxDirectives()) {
             throw new di_1.CyclicDependencyError(binding.key);
         }
         var factory = binding.factory;
@@ -816,8 +800,6 @@ var ElementInjector = (function (_super) {
             case 10:
                 obj = factory(d0, d1, d2, d3, d4, d5, d6, d7, d8, d9);
                 break;
-            default:
-                throw "Directive " + binding.key.token + " can only have up to 10 dependencies.";
         }
         this._addToQueries(obj, binding.key.token);
         return obj;
@@ -909,38 +891,8 @@ var ElementInjector = (function (_super) {
         }
     };
     ElementInjector.prototype._buildQueries = function () {
-        if (lang_1.isBlank(this._proto))
-            return;
-        var p = this._proto;
-        if (p._binding0 instanceof DirectiveBinding) {
-            this._buildQueriesForDeps(p._binding0.dependencies);
-        }
-        if (p._binding1 instanceof DirectiveBinding) {
-            this._buildQueriesForDeps(p._binding1.dependencies);
-        }
-        if (p._binding2 instanceof DirectiveBinding) {
-            this._buildQueriesForDeps(p._binding2.dependencies);
-        }
-        if (p._binding3 instanceof DirectiveBinding) {
-            this._buildQueriesForDeps(p._binding3.dependencies);
-        }
-        if (p._binding4 instanceof DirectiveBinding) {
-            this._buildQueriesForDeps(p._binding4.dependencies);
-        }
-        if (p._binding5 instanceof DirectiveBinding) {
-            this._buildQueriesForDeps(p._binding5.dependencies);
-        }
-        if (p._binding6 instanceof DirectiveBinding) {
-            this._buildQueriesForDeps(p._binding6.dependencies);
-        }
-        if (p._binding7 instanceof DirectiveBinding) {
-            this._buildQueriesForDeps(p._binding7.dependencies);
-        }
-        if (p._binding8 instanceof DirectiveBinding) {
-            this._buildQueriesForDeps(p._binding8.dependencies);
-        }
-        if (p._binding9 instanceof DirectiveBinding) {
-            this._buildQueriesForDeps(p._binding9.dependencies);
+        if (lang_1.isPresent(this._proto)) {
+            this._strategy.buildQueries();
         }
     };
     ElementInjector.prototype._findQuery = function (token) {
@@ -1040,7 +992,7 @@ var ElementInjector = (function (_super) {
             // and light dom dependencies
             LIGHT_DOM;
         var depth = visibility.depth;
-        if (!visibility.shouldIncludeSelf()) {
+        if (!visibility.includeSelf) {
             depth -= ei._proto.distanceToParent;
             if (lang_1.isPresent(ei._parent)) {
                 ei = ei._parent;
@@ -1095,74 +1047,217 @@ var ElementInjector = (function (_super) {
         var staticKeys = StaticKeys.instance();
         if (keyId === staticKeys.viewManagerId)
             return this._preBuiltObjects.viewManager;
-        // TODO add other objects as needed
         return _undefined;
     };
     ElementInjector.prototype._getObjByKeyId = function (keyId, visibility) {
-        var p = this._proto;
+        return this._strategy.getObjByKeyId(keyId, visibility);
+    };
+    ElementInjector.prototype.getDirectiveAtIndex = function (index) { return this._strategy.getDirectiveAtIndex(index); };
+    ElementInjector.prototype.hasInstances = function () { return this._constructionCounter > 0; };
+    /** Gets whether this element is exporting a component instance as $implicit. */
+    ElementInjector.prototype.isExportingComponent = function () { return this._proto.exportComponent; };
+    /** Gets whether this element is exporting its element as $implicit. */
+    ElementInjector.prototype.isExportingElement = function () { return this._proto.exportElement; };
+    /** Get the name to which this element's $implicit is to be assigned. */
+    ElementInjector.prototype.getExportImplicitName = function () { return this._proto.exportImplicitName; };
+    ElementInjector.prototype.getLightDomAppInjector = function () { return this._lightDomAppInjector; };
+    ElementInjector.prototype.getShadowDomAppInjector = function () { return this._shadowDomAppInjector; };
+    ElementInjector.prototype.getHost = function () { return this._host; };
+    ElementInjector.prototype.getBoundElementIndex = function () { return this._proto.index; };
+    return ElementInjector;
+})(TreeNode);
+exports.ElementInjector = ElementInjector;
+/**
+ * Strategy used by the `ElementInjector` when the number of bindings is 10 or less.
+ * In such a case, inlining fields is benefitial for performances.
+ */
+var ElementInjectorInlineStrategy = (function () {
+    function ElementInjectorInlineStrategy(_protoStrategy, _ei) {
+        this._protoStrategy = _protoStrategy;
+        this._ei = _ei;
+        // If this element injector has a component, the component instance will be stored in _obj0
+        this._obj0 = null;
+        this._obj1 = null;
+        this._obj2 = null;
+        this._obj3 = null;
+        this._obj4 = null;
+        this._obj5 = null;
+        this._obj6 = null;
+        this._obj7 = null;
+        this._obj8 = null;
+        this._obj9 = null;
+    }
+    ElementInjectorInlineStrategy.prototype.callOnDestroy = function () {
+        var p = this._protoStrategy;
+        if (p._binding0 instanceof DirectiveBinding && p._binding0.callOnDestroy) {
+            this._obj0.onDestroy();
+        }
+        if (p._binding1 instanceof DirectiveBinding && p._binding1.callOnDestroy) {
+            this._obj1.onDestroy();
+        }
+        if (p._binding2 instanceof DirectiveBinding && p._binding2.callOnDestroy) {
+            this._obj2.onDestroy();
+        }
+        if (p._binding3 instanceof DirectiveBinding && p._binding3.callOnDestroy) {
+            this._obj3.onDestroy();
+        }
+        if (p._binding4 instanceof DirectiveBinding && p._binding4.callOnDestroy) {
+            this._obj4.onDestroy();
+        }
+        if (p._binding5 instanceof DirectiveBinding && p._binding5.callOnDestroy) {
+            this._obj5.onDestroy();
+        }
+        if (p._binding6 instanceof DirectiveBinding && p._binding6.callOnDestroy) {
+            this._obj6.onDestroy();
+        }
+        if (p._binding7 instanceof DirectiveBinding && p._binding7.callOnDestroy) {
+            this._obj7.onDestroy();
+        }
+        if (p._binding8 instanceof DirectiveBinding && p._binding8.callOnDestroy) {
+            this._obj8.onDestroy();
+        }
+        if (p._binding9 instanceof DirectiveBinding && p._binding9.callOnDestroy) {
+            this._obj9.onDestroy();
+        }
+    };
+    ElementInjectorInlineStrategy.prototype.clearInstances = function () {
+        this._obj0 = null;
+        this._obj1 = null;
+        this._obj2 = null;
+        this._obj3 = null;
+        this._obj4 = null;
+        this._obj5 = null;
+        this._obj6 = null;
+        this._obj7 = null;
+        this._obj8 = null;
+        this._obj9 = null;
+    };
+    ElementInjectorInlineStrategy.prototype.hydrate = function () {
+        var p = this._protoStrategy;
+        if (lang_1.isPresent(p._keyId0))
+            this.getObjByKeyId(p._keyId0, LIGHT_DOM_AND_SHADOW_DOM);
+        if (lang_1.isPresent(p._keyId1))
+            this.getObjByKeyId(p._keyId1, LIGHT_DOM_AND_SHADOW_DOM);
+        if (lang_1.isPresent(p._keyId2))
+            this.getObjByKeyId(p._keyId2, LIGHT_DOM_AND_SHADOW_DOM);
+        if (lang_1.isPresent(p._keyId3))
+            this.getObjByKeyId(p._keyId3, LIGHT_DOM_AND_SHADOW_DOM);
+        if (lang_1.isPresent(p._keyId4))
+            this.getObjByKeyId(p._keyId4, LIGHT_DOM_AND_SHADOW_DOM);
+        if (lang_1.isPresent(p._keyId5))
+            this.getObjByKeyId(p._keyId5, LIGHT_DOM_AND_SHADOW_DOM);
+        if (lang_1.isPresent(p._keyId6))
+            this.getObjByKeyId(p._keyId6, LIGHT_DOM_AND_SHADOW_DOM);
+        if (lang_1.isPresent(p._keyId7))
+            this.getObjByKeyId(p._keyId7, LIGHT_DOM_AND_SHADOW_DOM);
+        if (lang_1.isPresent(p._keyId8))
+            this.getObjByKeyId(p._keyId8, LIGHT_DOM_AND_SHADOW_DOM);
+        if (lang_1.isPresent(p._keyId9))
+            this.getObjByKeyId(p._keyId9, LIGHT_DOM_AND_SHADOW_DOM);
+    };
+    ElementInjectorInlineStrategy.prototype.getComponent = function () { return this._obj0; };
+    ElementInjectorInlineStrategy.prototype.isComponentKey = function (key) {
+        return this._ei._proto._firstBindingIsComponent && lang_1.isPresent(key) &&
+            key.id === this._protoStrategy._keyId0;
+    };
+    ElementInjectorInlineStrategy.prototype.buildQueries = function () {
+        var p = this._protoStrategy;
+        if (p._binding0 instanceof DirectiveBinding) {
+            this._ei._buildQueriesForDeps(p._binding0.dependencies);
+        }
+        if (p._binding1 instanceof DirectiveBinding) {
+            this._ei._buildQueriesForDeps(p._binding1.dependencies);
+        }
+        if (p._binding2 instanceof DirectiveBinding) {
+            this._ei._buildQueriesForDeps(p._binding2.dependencies);
+        }
+        if (p._binding3 instanceof DirectiveBinding) {
+            this._ei._buildQueriesForDeps(p._binding3.dependencies);
+        }
+        if (p._binding4 instanceof DirectiveBinding) {
+            this._ei._buildQueriesForDeps(p._binding4.dependencies);
+        }
+        if (p._binding5 instanceof DirectiveBinding) {
+            this._ei._buildQueriesForDeps(p._binding5.dependencies);
+        }
+        if (p._binding6 instanceof DirectiveBinding) {
+            this._ei._buildQueriesForDeps(p._binding6.dependencies);
+        }
+        if (p._binding7 instanceof DirectiveBinding) {
+            this._ei._buildQueriesForDeps(p._binding7.dependencies);
+        }
+        if (p._binding8 instanceof DirectiveBinding) {
+            this._ei._buildQueriesForDeps(p._binding8.dependencies);
+        }
+        if (p._binding9 instanceof DirectiveBinding) {
+            this._ei._buildQueriesForDeps(p._binding9.dependencies);
+        }
+    };
+    ElementInjectorInlineStrategy.prototype.getObjByKeyId = function (keyId, visibility) {
+        var p = this._protoStrategy;
         if (p._keyId0 === keyId && (p._visibility0 & visibility) > 0) {
             if (lang_1.isBlank(this._obj0)) {
-                this._obj0 = this._new(p._binding0);
+                this._obj0 = this._ei._new(p._binding0);
             }
             return this._obj0;
         }
         if (p._keyId1 === keyId && (p._visibility1 & visibility) > 0) {
             if (lang_1.isBlank(this._obj1)) {
-                this._obj1 = this._new(p._binding1);
+                this._obj1 = this._ei._new(p._binding1);
             }
             return this._obj1;
         }
         if (p._keyId2 === keyId && (p._visibility2 & visibility) > 0) {
             if (lang_1.isBlank(this._obj2)) {
-                this._obj2 = this._new(p._binding2);
+                this._obj2 = this._ei._new(p._binding2);
             }
             return this._obj2;
         }
         if (p._keyId3 === keyId && (p._visibility3 & visibility) > 0) {
             if (lang_1.isBlank(this._obj3)) {
-                this._obj3 = this._new(p._binding3);
+                this._obj3 = this._ei._new(p._binding3);
             }
             return this._obj3;
         }
         if (p._keyId4 === keyId && (p._visibility4 & visibility) > 0) {
             if (lang_1.isBlank(this._obj4)) {
-                this._obj4 = this._new(p._binding4);
+                this._obj4 = this._ei._new(p._binding4);
             }
             return this._obj4;
         }
         if (p._keyId5 === keyId && (p._visibility5 & visibility) > 0) {
             if (lang_1.isBlank(this._obj5)) {
-                this._obj5 = this._new(p._binding5);
+                this._obj5 = this._ei._new(p._binding5);
             }
             return this._obj5;
         }
         if (p._keyId6 === keyId && (p._visibility6 & visibility) > 0) {
             if (lang_1.isBlank(this._obj6)) {
-                this._obj6 = this._new(p._binding6);
+                this._obj6 = this._ei._new(p._binding6);
             }
             return this._obj6;
         }
         if (p._keyId7 === keyId && (p._visibility7 & visibility) > 0) {
             if (lang_1.isBlank(this._obj7)) {
-                this._obj7 = this._new(p._binding7);
+                this._obj7 = this._ei._new(p._binding7);
             }
             return this._obj7;
         }
         if (p._keyId8 === keyId && (p._visibility8 & visibility) > 0) {
             if (lang_1.isBlank(this._obj8)) {
-                this._obj8 = this._new(p._binding8);
+                this._obj8 = this._ei._new(p._binding8);
             }
             return this._obj8;
         }
         if (p._keyId9 === keyId && (p._visibility9 & visibility) > 0) {
             if (lang_1.isBlank(this._obj9)) {
-                this._obj9 = this._new(p._binding9);
+                this._obj9 = this._ei._new(p._binding9);
             }
             return this._obj9;
         }
         return _undefined;
     };
-    ElementInjector.prototype.getDirectiveAtIndex = function (index) {
+    ElementInjectorInlineStrategy.prototype.getDirectiveAtIndex = function (index) {
         if (index == 0)
             return this._obj0;
         if (index == 1)
@@ -1185,20 +1280,78 @@ var ElementInjector = (function (_super) {
             return this._obj9;
         throw new OutOfBoundsAccess(index);
     };
-    ElementInjector.prototype.hasInstances = function () { return this._constructionCounter > 0; };
-    /** Gets whether this element is exporting a component instance as $implicit. */
-    ElementInjector.prototype.isExportingComponent = function () { return this._proto.exportComponent; };
-    /** Gets whether this element is exporting its element as $implicit. */
-    ElementInjector.prototype.isExportingElement = function () { return this._proto.exportElement; };
-    /** Get the name to which this element's $implicit is to be assigned. */
-    ElementInjector.prototype.getExportImplicitName = function () { return this._proto.exportImplicitName; };
-    ElementInjector.prototype.getLightDomAppInjector = function () { return this._lightDomAppInjector; };
-    ElementInjector.prototype.getShadowDomAppInjector = function () { return this._shadowDomAppInjector; };
-    ElementInjector.prototype.getHost = function () { return this._host; };
-    ElementInjector.prototype.getBoundElementIndex = function () { return this._proto.index; };
-    return ElementInjector;
-})(TreeNode);
-exports.ElementInjector = ElementInjector;
+    ElementInjectorInlineStrategy.prototype.getComponentBinding = function () {
+        return this._protoStrategy._binding0;
+    };
+    ElementInjectorInlineStrategy.prototype.getMaxDirectives = function () { return _MAX_DIRECTIVE_CONSTRUCTION_COUNTER; };
+    return ElementInjectorInlineStrategy;
+})();
+/**
+ * Strategy used by the `ElementInjector` when the number of bindings is 10 or less.
+ * In such a case, inlining fields is benefitial for performances.
+ */
+var ElementInjectorDynamicStrategy = (function () {
+    function ElementInjectorDynamicStrategy(_protoStrategy, _ei) {
+        this._protoStrategy = _protoStrategy;
+        this._ei = _ei;
+        this._objs = collection_1.ListWrapper.createFixedSize(_protoStrategy._bindings.length);
+    }
+    ElementInjectorDynamicStrategy.prototype.callOnDestroy = function () {
+        var p = this._protoStrategy;
+        for (var i = 0; i < p._bindings.length; i++) {
+            if (p._bindings[i] instanceof DirectiveBinding &&
+                p._bindings[i].callOnDestroy) {
+                this._objs[i].onDestroy();
+            }
+        }
+    };
+    ElementInjectorDynamicStrategy.prototype.clearInstances = function () { collection_1.ListWrapper.fill(this._objs, null); };
+    ElementInjectorDynamicStrategy.prototype.hydrate = function () {
+        var p = this._protoStrategy;
+        for (var i = 0; i < p._keyIds.length; i++) {
+            if (lang_1.isPresent(p._keyIds[i])) {
+                this.getObjByKeyId(p._keyIds[i], LIGHT_DOM_AND_SHADOW_DOM);
+            }
+        }
+    };
+    ElementInjectorDynamicStrategy.prototype.getComponent = function () { return this._objs[0]; };
+    ElementInjectorDynamicStrategy.prototype.isComponentKey = function (key) {
+        return this._ei._proto._firstBindingIsComponent && lang_1.isPresent(key) &&
+            key.id === this._protoStrategy._keyIds[0];
+    };
+    ElementInjectorDynamicStrategy.prototype.buildQueries = function () {
+        var p = this._protoStrategy;
+        for (var i = 0; i < p._bindings.length; i++) {
+            if (p._bindings[i] instanceof DirectiveBinding) {
+                this._ei._buildQueriesForDeps(p._bindings[i].dependencies);
+            }
+        }
+    };
+    ElementInjectorDynamicStrategy.prototype.getObjByKeyId = function (keyId, visibility) {
+        var p = this._protoStrategy;
+        // TODO(vicb): optimize lookup ?
+        for (var i = 0; i < p._keyIds.length; i++) {
+            if (p._keyIds[i] === keyId && (p._visibilities[i] & visibility) > 0) {
+                if (lang_1.isBlank(this._objs[i])) {
+                    this._objs[i] = this._ei._new(p._bindings[i]);
+                }
+                return this._objs[i];
+            }
+        }
+        return _undefined;
+    };
+    ElementInjectorDynamicStrategy.prototype.getDirectiveAtIndex = function (index) {
+        if (index < 0 || index >= this._objs.length) {
+            throw new OutOfBoundsAccess(index);
+        }
+        return this._objs[index];
+    };
+    ElementInjectorDynamicStrategy.prototype.getComponentBinding = function () {
+        return this._protoStrategy._bindings[0];
+    };
+    ElementInjectorDynamicStrategy.prototype.getMaxDirectives = function () { return this._objs.length; };
+    return ElementInjectorDynamicStrategy;
+})();
 var OutOfBoundsAccess = (function (_super) {
     __extends(OutOfBoundsAccess, _super);
     function OutOfBoundsAccess(index) {

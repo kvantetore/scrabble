@@ -33,10 +33,13 @@ var TemplateLoader = (function () {
         if (lang_1.isPresent(url)) {
             var promise = collection_1.StringMapWrapper.get(this._htmlCache, url);
             if (lang_1.isBlank(promise)) {
-                promise = this._xhr.get(url).then(function (html) {
+                // TODO(vicb): change error when TS gets fixed
+                // https://github.com/angular/angular/issues/2280
+                // throw new BaseException(`Failed to fetch url "${url}"`);
+                promise = async_1.PromiseWrapper.then(this._xhr.get(url), function (html) {
                     var template = dom_adapter_1.DOM.createTemplate(html);
                     return template;
-                });
+                }, function (_) { return async_1.PromiseWrapper.reject(new lang_1.BaseException("Failed to fetch url \"" + url + "\""), null); });
                 collection_1.StringMapWrapper.set(this._htmlCache, url, promise);
             }
             // We need to clone the result as others might change it

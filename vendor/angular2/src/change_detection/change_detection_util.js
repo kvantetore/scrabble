@@ -135,6 +135,7 @@ var ChangeDetectionUtil = (function () {
         changes[propertyName] = change;
         return changes;
     };
+    ChangeDetectionUtil.isValueBlank = function (value) { return lang_1.isBlank(value); };
     return ChangeDetectionUtil;
 })();
 exports.ChangeDetectionUtil = ChangeDetectionUtil;

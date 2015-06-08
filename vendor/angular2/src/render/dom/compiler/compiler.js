@@ -40,8 +40,8 @@ var DomCompiler = (function (_super) {
     DomCompiler.prototype.compile = function (template) {
         var _this = this;
         var tplPromise = this._templateLoader.load(template);
-        return async_1.PromiseWrapper.then(tplPromise, function (el) { return _this._compileTemplate(template, el, api_1.ProtoViewDto.COMPONENT_VIEW_TYPE); }, function (_) {
-            throw new lang_1.BaseException("Failed to load the template \"" + template.componentId + "\"");
+        return async_1.PromiseWrapper.then(tplPromise, function (el) { return _this._compileTemplate(template, el, api_1.ProtoViewDto.COMPONENT_VIEW_TYPE); }, function (e) {
+            throw new lang_1.BaseException("Failed to load the template for \"" + template.componentId + "\" : " + e);
         });
     };
     DomCompiler.prototype.compileHost = function (directiveMetadata) {

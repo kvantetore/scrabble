@@ -86,7 +86,7 @@ var ProtoViewDto = (function () {
 exports.ProtoViewDto = ProtoViewDto;
 var DirectiveMetadata = (function () {
     function DirectiveMetadata(_a) {
-        var id = _a.id, selector = _a.selector, compileChildren = _a.compileChildren, events = _a.events, hostListeners = _a.hostListeners, hostProperties = _a.hostProperties, hostAttributes = _a.hostAttributes, hostActions = _a.hostActions, properties = _a.properties, readAttributes = _a.readAttributes, type = _a.type, callOnDestroy = _a.callOnDestroy, callOnChange = _a.callOnChange, callOnAllChangesDone = _a.callOnAllChangesDone, changeDetection = _a.changeDetection;
+        var id = _a.id, selector = _a.selector, compileChildren = _a.compileChildren, events = _a.events, hostListeners = _a.hostListeners, hostProperties = _a.hostProperties, hostAttributes = _a.hostAttributes, hostActions = _a.hostActions, properties = _a.properties, readAttributes = _a.readAttributes, type = _a.type, callOnDestroy = _a.callOnDestroy, callOnChange = _a.callOnChange, callOnCheck = _a.callOnCheck, callOnInit = _a.callOnInit, callOnAllChangesDone = _a.callOnAllChangesDone, changeDetection = _a.changeDetection;
         this.id = id;
         this.selector = selector;
         this.compileChildren = lang_1.isPresent(compileChildren) ? compileChildren : true;
@@ -100,6 +100,8 @@ var DirectiveMetadata = (function () {
         this.type = type;
         this.callOnDestroy = callOnDestroy;
         this.callOnChange = callOnChange;
+        this.callOnCheck = callOnCheck;
+        this.callOnInit = callOnInit;
         this.callOnAllChangesDone = callOnAllChangesDone;
         this.changeDetection = changeDetection;
     }
@@ -172,9 +174,9 @@ var Renderer = (function () {
         return null;
     };
     /**
-     * Detaches a free host view's element from the DOM.
+     * Detaches a free view's element from the DOM.
      */
-    Renderer.prototype.detachFreeHostView = function (parentHostViewRef, hostViewRef) { };
+    Renderer.prototype.detachFreeView = function (view) { };
     /**
      * Creates a regular view out of the given ProtoView
      */

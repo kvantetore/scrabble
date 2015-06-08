@@ -9,7 +9,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var decorators_1 = require('angular2/src/core/annotations/decorators');
+var angular2_1 = require('angular2/angular2');
 var validators_1 = require('./validators');
 var directives_1 = require('./directives');
 var RequiredValidatorDirective = (function () {
@@ -17,7 +17,7 @@ var RequiredValidatorDirective = (function () {
         c.validator = validators_1.Validators.compose([c.validator, validators_1.Validators.required]);
     }
     RequiredValidatorDirective = __decorate([
-        decorators_1.Directive({ selector: '[required]' }), 
+        angular2_1.Directive({ selector: '[required]' }), 
         __metadata('design:paramtypes', [directives_1.ControlDirective])
     ], RequiredValidatorDirective);
     return RequiredValidatorDirective;

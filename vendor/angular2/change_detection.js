@@ -52,6 +52,7 @@ exports.uninitialized = change_detection_util_1.uninitialized;
 var pipe_1 = require('./src/change_detection/pipes/pipe');
 exports.WrappedValue = pipe_1.WrappedValue;
 exports.Pipe = pipe_1.Pipe;
+exports.PipeFactory = pipe_1.PipeFactory;
 var null_pipe_1 = require('./src/change_detection/pipes/null_pipe');
 exports.NullPipe = null_pipe_1.NullPipe;
 exports.NullPipeFactory = null_pipe_1.NullPipeFactory;

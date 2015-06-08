@@ -329,7 +329,10 @@ var _ParseAST = (function () {
         var result = this.parsePrimary();
         while (true) {
             if (this.optionalCharacter(lexer_1.$PERIOD)) {
-                result = this.parseAccessMemberOrMethodCall(result);
+                result = this.parseAccessMemberOrMethodCall(result, false);
+            }
+            else if (this.optionalOperator('?.')) {
+                result = this.parseAccessMemberOrMethodCall(result, true);
             }
             else if (this.optionalCharacter(lexer_1.$LBRACKET)) {
                 var key = this.parseExpression();
@@ -373,7 +376,7 @@ var _ParseAST = (function () {
             return this.parseLiteralMap();
         }
         else if (this.next.isIdentifier()) {
-            return this.parseAccessMemberOrMethodCall(_implicitReceiver);
+            return this.parseAccessMemberOrMethodCall(_implicitReceiver, false);
         }
         else if (this.next.isNumber()) {
             var value = this.next.toNumber();
@@ -416,18 +419,21 @@ var _ParseAST = (function () {
         }
         return new ast_1.LiteralMap(keys, values);
     };
-    _ParseAST.prototype.parseAccessMemberOrMethodCall = function (receiver) {
+    _ParseAST.prototype.parseAccessMemberOrMethodCall = function (receiver, isSafe) {
+        if (isSafe === void 0) { isSafe = false; }
         var id = this.expectIdentifierOrKeyword();
         if (this.optionalCharacter(lexer_1.$LPAREN)) {
             var args = this.parseCallArguments();
             this.expectCharacter(lexer_1.$RPAREN);
             var fn = this.reflector.method(id);
-            return new ast_1.MethodCall(receiver, id, fn, args);
+            return isSafe ? new ast_1.SafeMethodCall(receiver, id, fn, args) :
+                new ast_1.MethodCall(receiver, id, fn, args);
         }
         else {
             var getter = this.reflector.getter(id);
             var setter = this.reflector.setter(id);
-            var am = new ast_1.AccessMember(receiver, id, getter, setter);
+            var am = isSafe ? new ast_1.SafeAccessMember(receiver, id, getter, setter) :
+                new ast_1.AccessMember(receiver, id, getter, setter);
             if (this.optionalOperator("|")) {
                 return this.parseInlinedPipe(am);
             }

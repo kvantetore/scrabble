@@ -76,7 +76,7 @@ export declare class ListWrapper {
     static equals(a: List<any>, b: List<any>): boolean;
     static slice<T>(l: List<T>, from?: int, to?: int): List<T>;
     static splice<T>(l: List<T>, from: int, length: int): List<T>;
-    static sort<T>(l: List<T>, compareFn: (a: T, b: T) => number): void;
+    static sort<T>(l: List<T>, compareFn?: (a: T, b: T) => number): void;
 }
 export declare function isListLikeIterable(obj: any): boolean;
 export declare function iterateListLike(obj: any, fn: Function): void;

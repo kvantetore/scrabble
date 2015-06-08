@@ -5,7 +5,7 @@ import * as renderApi from 'angular2/src/render/api';
 import { EventDispatcher } from 'angular2/src/render/api';
 export declare class AppViewContainer {
     views: List<AppView>;
-    constructor();
+    freeViews: List<AppView>;
 }
 /**
  * Const of making objects: http://jsperf.com/instantiate-size-of-object

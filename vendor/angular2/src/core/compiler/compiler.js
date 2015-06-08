@@ -147,9 +147,7 @@ var Compiler = (function () {
         var nestedPVPromises = [];
         collection_1.ListWrapper.forEach(this._collectComponentElementBinders(protoViews), function (elementBinder) {
             var nestedComponent = elementBinder.componentDirective;
-            var elementBinderDone = function (nestedPv) {
-                elementBinder.nestedProtoView = nestedPv;
-            };
+            var elementBinderDone = function (nestedPv) { elementBinder.nestedProtoView = nestedPv; };
             var nestedCall = _this._compile(nestedComponent);
             if (async_1.PromiseWrapper.isPromise(nestedCall)) {
                 collection_1.ListWrapper.push(nestedPVPromises, nestedCall.then(elementBinderDone));

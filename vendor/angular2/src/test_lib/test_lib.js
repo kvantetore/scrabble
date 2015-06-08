@@ -266,6 +266,8 @@ var SpyObject = (function () {
             }
         }
     }
+    // Noop so that SpyObject has the smae interface as in Dart
+    SpyObject.prototype.noSuchMethod = function (args) { };
     SpyObject.prototype.spy = function (name) {
         if (!this[name]) {
             this[name] = this._createGuinnessCompatibleSpy(name);

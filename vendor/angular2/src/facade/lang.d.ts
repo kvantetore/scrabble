@@ -13,10 +13,8 @@ export declare var Date: DateConstructor;
 export declare function assertionsEnabled(): boolean;
 export declare function CONST_EXPR<T>(expr: T): T;
 export declare function CONST(): (target: any) => any;
-export declare class ABSTRACT {
-}
-export declare class IMPLEMENTS {
-}
+export declare function ABSTRACT(): (t: any) => any;
+export declare function IMPLEMENTS(_: any): (t: any) => any;
 export declare function isPresent(obj: any): boolean;
 export declare function isBlank(obj: any): boolean;
 export declare function isString(obj: any): boolean;
@@ -62,7 +60,8 @@ export declare class NumberWrapper {
 export declare var RegExp: RegExpConstructor;
 export declare class RegExpWrapper {
     static create(regExpStr: any, flags?: string): RegExp;
-    static firstMatch(regExp: any, input: any): any;
+    static firstMatch(regExp: RegExp, input: string): List<string>;
+    static test(regExp: RegExp, input: string): boolean;
     static matcher(regExp: any, input: any): {
         re: any;
         input: any;
@@ -77,6 +76,7 @@ export declare class FunctionWrapper {
 export declare function looseIdentical(a: any, b: any): boolean;
 export declare function getMapKey(value: any): any;
 export declare function normalizeBlank(obj: any): any;
+export declare function normalizeBool(obj: boolean): boolean;
 export declare function isJsObject(o: any): boolean;
 export declare function print(obj: any): void;
 export declare class Json {

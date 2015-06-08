@@ -1,6 +1,6 @@
 {
   "name": "angular2",
-  "version": "2.0.0-alpha.25",
+  "version": "2.0.0-alpha.26",
   "description": "Angular 2 - a web framework for modern web apps",
   "homepage": "https://github.com/angular/angular",
   "bugs": "https://github.com/angular/angular/issues",
@@ -8,7 +8,8 @@
   "license": "Apache-2.0",
   "dependencies": {
     "traceur": "0.0.87",
-    "rtts_assert": "2.0.0-alpha.25",
+    "reflect-metadata": "0.1.0",
+    "rtts_assert": "2.0.0-alpha.26",
     "rx": "2.5.1",
     "zone.js": "0.5.0"
   },

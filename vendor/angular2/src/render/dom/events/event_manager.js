@@ -81,9 +81,11 @@ var DomEventsPlugin = (function (_super) {
             DomEventsPlugin.sameElementCallback(element, handler, zone);
     };
     DomEventsPlugin.sameElementCallback = function (element, handler, zone) {
-        return function (event) { if (event.target === element) {
-            zone.run(function () { return handler(event); });
-        } };
+        return function (event) {
+            if (event.target === element) {
+                zone.run(function () { return handler(event); });
+            }
+        };
     };
     DomEventsPlugin.bubbleCallback = function (element, handler, zone) {
         return function (event) { return zone.run(function () { return handler(event); }); };

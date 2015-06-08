@@ -63,8 +63,8 @@ import { Injectable } from 'angular2/src/di/annotations_impl';
  *
  * To inject element-specific special objects, declare the constructor parameter as:
  * - `element: ElementRef` to obtain a reference to logical element in the view.
- * - `viewContainer: ViewContainerRef` to control child template instantiation, for {@link
- * Directive} directives only
+ * - `viewContainer: ViewContainerRef` to control child template instantiation, for
+ * {@link Directive} directives only
  * - `bindingPropagation: BindingPropagation` to control change detection in a more granular way.
  *
  * ## Example
@@ -97,9 +97,9 @@ import { Injectable } from 'angular2/src/di/annotations_impl';
  *
  * @Directive({
  *   selector: '[dependency]',
- *   properties: {
- *     'id':'dependency'
- *   }
+ *   properties: [
+ *     'id: dependency'
+ *   ]
  * })
  * class Dependency {
  *   id:string;
@@ -207,11 +207,10 @@ import { Injectable } from 'angular2/src/di/annotations_impl';
  *
  *
  * A directive can also query for other child directives. Since parent directives are instantiated
- * before child
- * directives, a directive can't simply inject the list of child directives. Instead, the directive
- * injects a {@link QueryList}, which updates its contents as children are added, removed, or moved
- * by a directive
- * that uses a {@link ViewContainerRef} such as a `for`, an `if`, or a `switch`.
+ * before child directives, a directive can't simply inject the list of child directives. Instead,
+ * the directive injects a {@link QueryList}, which updates its contents as children are added,
+ * removed, or moved by a directive that uses a {@link ViewContainerRef} such as a `ng-for`, an
+ * `ng-if`, or an `ng-switch`.
  *
  * ```
  * @Directive({ selector: '[my-directive]' })
@@ -222,8 +221,7 @@ import { Injectable } from 'angular2/src/di/annotations_impl';
  * ```
  *
  * This directive would be instantiated with a {@link QueryList} which contains `Dependency` 4 and
- * 6. Here, `Dependency`
- * 5 would not be included, because it is not a direct child.
+ * 6. Here, `Dependency` 5 would not be included, because it is not a direct child.
  *
  * ### Injecting a live collection of descendant directives
  *
@@ -269,9 +267,9 @@ import { Injectable } from 'angular2/src/di/annotations_impl';
  * ```
  * @Directive({
  *   selector: '[tooltip]',
- *   properties: {
- *     'text': 'tooltip'
- *   },
+ *   properties: [
+ *     'text: tooltip'
+ *   ],
  *   hostListeners: {
  *     'onmouseenter': 'onMouseEnter()',
  *     'onmouseleave': 'onMouseLeave()'
@@ -355,9 +353,7 @@ import { Injectable } from 'angular2/src/di/annotations_impl';
  * ```
  * @Directive({
  *   selector: '[unless]',
- *   properties: {
- *     'unless': 'unless'
- *   }
+ *   properties: ['unless']
  * })
  * export class Unless {
  *   viewContainer: ViewContainerRef;
@@ -445,25 +441,28 @@ export declare class Directive extends Injectable {
      * Enumerates the set of properties that accept data binding for a directive.
      *
      * The `properties` property defines a set of `directiveProperty` to `bindingProperty`
-     * key-value pairs:
+     * configuration:
      *
      * - `directiveProperty` specifies the component property where the value is written.
      * - `bindingProperty` specifies the DOM property where the value is read from.
      *
      * You can include a {@link Pipe} when specifying a `bindingProperty` to allow for data
-     * transformation and structural
-     * change detection of the value. These pipes will be evaluated in the context of this component.
-     *
+     * transformation and structural change detection of the value. These pipes will be evaluated in
+     * the context of this component.
      *
      * ## Syntax
      *
+     * There is no need to specify both `directiveProperty` and `bindingProperty` when they both have
+     * the same value.
+     *
      * ```
      * @Directive({
-     *   properties: {
-     *     'directiveProperty1': 'bindingProperty1',
-     *     'directiveProperty2': 'bindingProperty2 | pipe1 | ...',
+     *   properties: [
+     *     'propertyName', // shorthand notation for 'propertyName: propertyName'
+     *     'directiveProperty1: bindingProperty1',
+     *     'directiveProperty2: bindingProperty2 | pipe1 | ...',
      *     ...
-     *   }
+     *   ]
      * }
      * ```
      *
@@ -471,26 +470,24 @@ export declare class Directive extends Injectable {
      * ## Basic Property Binding
      *
      * We can easily build a simple `Tooltip` directive that exposes a `tooltip` property, which can
-     * be used in templates
-     * with standard Angular syntax. For example:
+     * be used in templates with standard Angular syntax. For example:
      *
      * ```
      * @Directive({
      *   selector: '[tooltip]',
-     *   properties: {
-     *     'text': 'tooltip'
-     *   }
+     *   properties: [
+     *     'text: tooltip'
+     *   ]
      * })
      * class Tooltip {
-     *   set text(text) {
-     *     // This will get called every time the 'tooltip' binding changes with the new value.
+     *   set text(value: string) {
+     *     // This will get called every time with the new value when the 'tooltip' property changes
      *   }
      * }
      * ```
      *
      * We can then bind to the `tooltip' property as either an expression (`someExpression`) or as a
-     * string literal, as
-     * shown in the HTML template below:
+     * string literal, as shown in the HTML template below:
      *
      * ```html
      * <div [tooltip]="someExpression">...</div>
@@ -500,27 +497,24 @@ export declare class Directive extends Injectable {
      * Whenever the `someExpression` expression changes, the `properties` declaration instructs
      * Angular to update the `Tooltip`'s `text` property.
      *
-     *
-     *
      * ## Bindings With Pipes
      *
      * You can also use pipes when writing binding definitions for a directive.
      *
      * For example, we could write a binding that updates the directive on structural changes, rather
-     * than on reference
-     * changes, as normally occurs in change detection.
+     * than on reference changes, as normally occurs in change detection.
      *
-     * See {@link Pipe} and {@link keyValDiff} documentation for more details.
+     * See {@link Pipe} and {@link pipes/keyValDiff} documentation for more details.
      *
      * ```
      * @Directive({
      *   selector: '[class-set]',
-     *   properties: {
-     *     'classChanges': 'classSet | keyValDiff'
-     *   }
+     *   properties: [
+     *     'classChanges: classSet | keyValDiff'
+     *   ]
      * })
      * class ClassSet {
-     *   set classChanges(changes:KeyValueChanges) {
+     *   set classChanges(changes: KeyValueChanges) {
      *     // This will get called every time the `class-set` expressions changes its structure.
      *   }
      * }
@@ -536,7 +530,7 @@ export declare class Directive extends Injectable {
      * keyValDiff`.
      *
      */
-    properties: StringMap<string, string>;
+    properties: List<string>;
     /**
      * Enumerates the set of emitted events.
      *
@@ -694,7 +688,8 @@ export declare class Directive extends Injectable {
     /**
      * Specifies a set of lifecycle hostListeners in which the directive participates.
      *
-     * See {@link onChange}, {@link onDestroy}, {@link onAllChangesDone} for details.
+     * See {@link annotations/onChange}, {@link annotations/onDestroy},
+     * {@link annotations/onAllChangesDone} for details.
      */
     lifecycle: List<LifecycleEvent>;
     /**
@@ -734,7 +729,7 @@ export declare class Directive extends Injectable {
     hostInjector: List<any>;
     constructor({selector, properties, events, hostListeners, hostProperties, hostAttributes, hostActions, lifecycle, hostInjector, compileChildren}?: {
         selector?: string;
-        properties?: any;
+        properties?: List<string>;
         events?: List<string>;
         hostListeners?: StringMap<string, string>;
         hostProperties?: StringMap<string, string>;
@@ -744,12 +739,6 @@ export declare class Directive extends Injectable {
         hostInjector?: List<any>;
         compileChildren?: boolean;
     });
-    /**
-     * Returns true if a directive participates in a given `LifecycleEvent`.
-     *
-     * See {@link onChange}, {@link onDestroy}, {@link onAllChangesDone} for details.
-     */
-    hasLifecycleHook(hook: LifecycleEvent): boolean;
 }
 /**
  * Declare reusable UI building blocks for an application.
@@ -762,8 +751,8 @@ export declare class Directive extends Injectable {
  * When a component is instantiated, Angular
  * - creates a shadow DOM for the component.
  * - loads the selected template into the shadow DOM.
- * - creates a child {@link Injector} which is configured with the `appInjector` for the {@link
- * Component}.
+ * - creates a child {@link Injector} which is configured with the `appInjector` for the
+ * {@link Component}.
  *
  * All template expressions and statements are then evaluated against the component instance.
  *
@@ -946,12 +935,12 @@ export declare class Component extends Directive {
     viewInjector: List<any>;
     constructor({selector, properties, events, hostListeners, hostProperties, hostAttributes, hostActions, appInjector, lifecycle, hostInjector, viewInjector, changeDetection, compileChildren}?: {
         selector?: string;
-        properties?: Object;
+        properties?: List<string>;
         events?: List<string>;
-        hostListeners?: Map<string, string>;
-        hostProperties?: any;
-        hostAttributes?: any;
-        hostActions?: any;
+        hostListeners?: StringMap<string, string>;
+        hostProperties?: StringMap<string, string>;
+        hostAttributes?: StringMap<string, string>;
+        hostActions?: StringMap<string, string>;
         appInjector?: List<any>;
         lifecycle?: List<LifecycleEvent>;
         hostInjector?: List<any>;
@@ -996,10 +985,10 @@ export declare const onDestroy: LifecycleEvent;
  * ```
  * @Directive({
  *   selector: '[class-set]',
- *   properties: {
- *     'propA': 'propA'
- *     'propB': 'propB'
- *   },
+ *   properties: [
+ *     'propA',
+ *     'propB'
+ *   ],
  *   lifecycle: [onChange]
  * })
  * class ClassSet {
@@ -1019,6 +1008,52 @@ export declare const onDestroy: LifecycleEvent;
  * @exportedAs angular2/annotations
  */
 export declare const onChange: LifecycleEvent;
+/**
+ * Notify a directive when it has been checked.
+ *
+ * This method is called right after the directive's bindings have been checked,
+ * and before any of its children's bindings have been checked.
+ *
+ * It is invoked every time even when none of the directive's bindings has changed.
+ *
+ * ## Example:
+ *
+ * ```
+ * @Directive({
+ *   selector: '[class-set]',
+ *   lifecycle: [onCheck]
+ * })
+ * class ClassSet {
+ *   onCheck() {
+ *   }
+ * }
+ *  ```
+ * @exportedAs angular2/annotations
+ */
+export declare const onCheck: LifecycleEvent;
+/**
+ * Notify a directive when it has been checked the first itme.
+ *
+ * This method is called right after the directive's bindings have been checked,
+ * and before any of its children's bindings have been checked.
+ *
+ * It is invoked only once.
+ *
+ * ## Example:
+ *
+ * ```
+ * @Directive({
+ *   selector: '[class-set]',
+ *   lifecycle: [onInit]
+ * })
+ * class ClassSet {
+ *   onInit() {
+ *   }
+ * }
+ *  ```
+ * @exportedAs angular2/annotations
+ */
+export declare const onInit: LifecycleEvent;
 /**
  * Notify a directive when the bindings of all its children have been changed.
  *

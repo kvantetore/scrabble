@@ -30,9 +30,7 @@ var view_1 = require('./view/view');
 var view_container_1 = require('./view/view_container');
 var util_1 = require('./util');
 var api_1 = require('../api');
-// TODO(tbosch): use an OpaqueToken here once our transpiler supports
-// const expressions!
-exports.DOCUMENT_TOKEN = 'DocumentToken';
+exports.DOCUMENT_TOKEN = lang_1.CONST_EXPR(new di_1.OpaqueToken('DocumentToken'));
 var DomRenderer = (function (_super) {
     __extends(DomRenderer, _super);
     function DomRenderer(eventManager, shadowDomStrategy, document) {
@@ -49,9 +47,9 @@ var DomRenderer = (function (_super) {
         }
         return new view_1.DomViewRef(this._createView(hostProtoView, element));
     };
-    DomRenderer.prototype.detachFreeHostView = function (parentHostViewRef, hostViewRef) {
-        var hostView = view_1.resolveInternalDomView(hostViewRef);
-        this._removeViewNodes(hostView);
+    DomRenderer.prototype.detachFreeView = function (viewRef) {
+        var view = view_1.resolveInternalDomView(viewRef);
+        this._removeViewNodes(view);
     };
     DomRenderer.prototype.createView = function (protoViewRef) {
         var protoView = proto_view_1.resolveInternalDomProtoView(protoViewRef);
@@ -79,9 +77,8 @@ var DomRenderer = (function (_super) {
         componentView.rootNodes = rootNodes;
         this._moveViewNodesIntoParent(componentView.shadowRoot, componentView);
     };
-    DomRenderer.prototype.getHostElement = function (hostViewRef) {
-        var hostView = view_1.resolveInternalDomView(hostViewRef);
-        return hostView.boundElements[0];
+    DomRenderer.prototype.getRootNodes = function (viewRef) {
+        return view_1.resolveInternalDomView(viewRef).rootNodes;
     };
     DomRenderer.prototype.detachComponentView = function (hostViewRef, boundElementIndex, componentViewRef) {
         var hostView = view_1.resolveInternalDomView(hostViewRef);
@@ -192,24 +189,21 @@ var DomRenderer = (function (_super) {
         view.eventDispatcher = dispatcher;
     };
     DomRenderer.prototype._createView = function (protoView, inplaceElement) {
-        var rootElementClone = lang_1.isPresent(inplaceElement) ? inplaceElement : dom_adapter_1.DOM.importIntoDoc(protoView.element);
+        var rootElementClone;
         var elementsWithBindingsDynamic;
-        if (protoView.isTemplateElement) {
-            elementsWithBindingsDynamic =
-                dom_adapter_1.DOM.querySelectorAll(dom_adapter_1.DOM.content(rootElementClone), util_1.NG_BINDING_CLASS_SELECTOR);
-        }
-        else {
-            elementsWithBindingsDynamic = dom_adapter_1.DOM.getElementsByClassName(rootElementClone, util_1.NG_BINDING_CLASS);
-        }
-        var elementsWithBindings = collection_1.ListWrapper.createFixedSize(elementsWithBindingsDynamic.length);
-        for (var binderIdx = 0; binderIdx < elementsWithBindingsDynamic.length; ++binderIdx) {
-            elementsWithBindings[binderIdx] = elementsWithBindingsDynamic[binderIdx];
-        }
         var viewRootNodes;
-        if (protoView.isTemplateElement) {
-            var childNode = dom_adapter_1.DOM.firstChild(dom_adapter_1.DOM.content(rootElementClone));
-            viewRootNodes =
-                []; // TODO(perf): Should be fixed size, since we could pre-compute in in DomProtoView
+        if (lang_1.isPresent(inplaceElement)) {
+            rootElementClone = inplaceElement;
+            elementsWithBindingsDynamic = [];
+            viewRootNodes = [inplaceElement];
+        }
+        else if (protoView.isTemplateElement) {
+            rootElementClone = dom_adapter_1.DOM.importIntoDoc(dom_adapter_1.DOM.content(protoView.element));
+            elementsWithBindingsDynamic =
+                dom_adapter_1.DOM.querySelectorAll(rootElementClone, util_1.NG_BINDING_CLASS_SELECTOR);
+            var childNode = dom_adapter_1.DOM.firstChild(rootElementClone);
+            // TODO(perf): Should be fixed size, since we could pre-compute in in DomProtoView
+            viewRootNodes = [];
             // Note: An explicit loop is the fastest way to convert a DOM array into a JS array!
             while (childNode != null) {
                 collection_1.ListWrapper.push(viewRootNodes, childNode);
@@ -217,7 +211,13 @@ var DomRenderer = (function (_super) {
             }
         }
         else {
+            rootElementClone = dom_adapter_1.DOM.importIntoDoc(protoView.element);
+            elementsWithBindingsDynamic = dom_adapter_1.DOM.getElementsByClassName(rootElementClone, util_1.NG_BINDING_CLASS);
             viewRootNodes = [rootElementClone];
+        }
+        var elementsWithBindings = collection_1.ListWrapper.createFixedSize(elementsWithBindingsDynamic.length);
+        for (var binderIdx = 0; binderIdx < elementsWithBindingsDynamic.length; ++binderIdx) {
+            elementsWithBindings[binderIdx] = elementsWithBindingsDynamic[binderIdx];
         }
         var binders = protoView.elementBinders;
         var boundTextNodes = [];
@@ -226,15 +226,21 @@ var DomRenderer = (function (_super) {
         for (var binderIdx = 0; binderIdx < binders.length; binderIdx++) {
             var binder = binders[binderIdx];
             var element;
+            var childNodes;
             if (binderIdx === 0 && protoView.rootBindingOffset === 1) {
-                element = rootElementClone;
+                // Note: if the root element was a template,
+                // the rootElementClone is a document fragment,
+                // which will be empty as soon as the view gets appended
+                // to a parent. So we store null in the boundElements array.
+                element = protoView.isTemplateElement ? null : rootElementClone;
+                childNodes = dom_adapter_1.DOM.childNodes(rootElementClone);
             }
             else {
                 element = elementsWithBindings[binderIdx - protoView.rootBindingOffset];
+                childNodes = dom_adapter_1.DOM.childNodes(element);
             }
             boundElements[binderIdx] = element;
             // boundTextNodes
-            var childNodes = dom_adapter_1.DOM.childNodes(dom_adapter_1.DOM.templateAwareRoot(element));
             var textNodeIndices = binder.textNodeIndices;
             for (var i = 0; i < textNodeIndices.length; i++) {
                 collection_1.ListWrapper.push(boundTextNodes, childNodes[textNodeIndices[i]]);

@@ -15,6 +15,7 @@ export declare class DynamicChangeDetector extends AbstractChangeDetector {
     pipes: List<any>;
     prevContexts: List<any>;
     directives: any;
+    alreadyChecked: boolean;
     constructor(changeControlStrategy: string, dispatcher: any, pipeRegistry: PipeRegistry, protos: List<ProtoRecord>, directiveRecords: List<any>);
     hydrate(context: any, locals: any, directives: any): void;
     dehydrate(): void;

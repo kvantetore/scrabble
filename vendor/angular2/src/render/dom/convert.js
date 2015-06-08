@@ -17,7 +17,12 @@ function directiveMetadataToMap(meta) {
         ['properties', _cloneIfPresent(meta.properties)],
         ['readAttributes', _cloneIfPresent(meta.readAttributes)],
         ['type', meta.type],
-        ['version', 1]
+        ['callOnDestroy', meta.callOnDestroy],
+        ['callOnCheck', meta.callOnCheck],
+        ['callOnInit', meta.callOnInit],
+        ['callOnChange', meta.callOnChange],
+        ['callOnAllChangesDone', meta.callOnAllChangesDone],
+        ['version', 1],
     ]);
 }
 exports.directiveMetadataToMap = directiveMetadataToMap;
@@ -37,7 +42,12 @@ function directiveMetadataFromMap(map) {
         hostAttributes: _cloneIfPresent(collection_1.MapWrapper.get(map, 'hostAttributes')),
         properties: _cloneIfPresent(collection_1.MapWrapper.get(map, 'properties')),
         readAttributes: _cloneIfPresent(collection_1.MapWrapper.get(map, 'readAttributes')),
-        type: collection_1.MapWrapper.get(map, 'type')
+        type: collection_1.MapWrapper.get(map, 'type'),
+        callOnDestroy: collection_1.MapWrapper.get(map, 'callOnDestroy'),
+        callOnCheck: collection_1.MapWrapper.get(map, 'callOnCheck'),
+        callOnChange: collection_1.MapWrapper.get(map, 'callOnChange'),
+        callOnInit: collection_1.MapWrapper.get(map, 'callOnInit'),
+        callOnAllChangesDone: collection_1.MapWrapper.get(map, 'callOnAllChangesDone')
     });
 }
 exports.directiveMetadataFromMap = directiveMetadataFromMap;

@@ -19,6 +19,9 @@ var DynamicChangeDetector = (function (_super) {
         this.pipeRegistry = pipeRegistry;
         this.protos = protos;
         this.directiveRecords = directiveRecords;
+        this.locals = null;
+        this.directives = null;
+        this.alreadyChecked = false;
         this.values = collection_1.ListWrapper.createFixedSize(protos.length + 1);
         this.pipes = collection_1.ListWrapper.createFixedSize(protos.length + 1);
         this.prevContexts = collection_1.ListWrapper.createFixedSize(protos.length + 1);
@@ -27,14 +30,13 @@ var DynamicChangeDetector = (function (_super) {
         collection_1.ListWrapper.fill(this.pipes, null);
         collection_1.ListWrapper.fill(this.prevContexts, change_detection_util_1.uninitialized);
         collection_1.ListWrapper.fill(this.changes, false);
-        this.locals = null;
-        this.directives = null;
     }
     DynamicChangeDetector.prototype.hydrate = function (context, locals, directives) {
         this.mode = change_detection_util_1.ChangeDetectionUtil.changeDetectionMode(this.changeControlStrategy);
         this.values[0] = context;
         this.locals = locals;
         this.directives = directives;
+        this.alreadyChecked = false;
     };
     DynamicChangeDetector.prototype.dehydrate = function () {
         this._destroyPipes();
@@ -60,23 +62,34 @@ var DynamicChangeDetector = (function (_super) {
             var proto = protos[i];
             var bindingRecord = proto.bindingRecord;
             var directiveRecord = bindingRecord.directiveRecord;
-            var change = this._check(proto, throwOnChange);
-            if (lang_1.isPresent(change)) {
-                this._updateDirectiveOrElement(change, bindingRecord);
-                isChanged = true;
-                changes = this._addChange(bindingRecord, change, changes);
+            if (proto.isLifeCycleRecord()) {
+                if (proto.name === "onCheck" && !throwOnChange) {
+                    this._getDirectiveFor(directiveRecord.directiveIndex).onCheck();
+                }
+                else if (proto.name === "onInit" && !throwOnChange && !this.alreadyChecked) {
+                    this._getDirectiveFor(directiveRecord.directiveIndex).onInit();
+                }
+                else if (proto.name === "onChange" && lang_1.isPresent(changes) && !throwOnChange) {
+                    this._getDirectiveFor(directiveRecord.directiveIndex).onChange(changes);
+                }
+            }
+            else {
+                var change = this._check(proto, throwOnChange);
+                if (lang_1.isPresent(change)) {
+                    this._updateDirectiveOrElement(change, bindingRecord);
+                    isChanged = true;
+                    changes = this._addChange(bindingRecord, change, changes);
+                }
             }
             if (proto.lastInDirective) {
-                if (lang_1.isPresent(changes)) {
-                    this._getDirectiveFor(directiveRecord.directiveIndex).onChange(changes);
-                    changes = null;
-                }
+                changes = null;
                 if (isChanged && bindingRecord.isOnPushChangeDetection()) {
                     this._getDetectorFor(directiveRecord.directiveIndex).markAsCheckOnce();
                 }
                 isChanged = false;
             }
         }
+        this.alreadyChecked = true;
     };
     DynamicChangeDetector.prototype.callOnAllChangesDone = function () {
         var dirs = this.directiveRecords;
@@ -108,7 +121,7 @@ var DynamicChangeDetector = (function (_super) {
     DynamicChangeDetector.prototype._getDetectorFor = function (directiveIndex) { return this.directives.getDetectorFor(directiveIndex); };
     DynamicChangeDetector.prototype._check = function (proto, throwOnChange) {
         try {
-            if (proto.mode === proto_record_1.RECORD_TYPE_PIPE || proto.mode === proto_record_1.RECORD_TYPE_BINDING_PIPE) {
+            if (proto.isPipeRecord()) {
                 return this._pipeCheck(proto, throwOnChange);
             }
             else {
@@ -155,10 +168,20 @@ var DynamicChangeDetector = (function (_super) {
             case proto_record_1.RECORD_TYPE_PROPERTY:
                 var context = this._readContext(proto);
                 return proto.funcOrValue(context);
+            case proto_record_1.RECORD_TYPE_SAFE_PROPERTY:
+                var context = this._readContext(proto);
+                return lang_1.isBlank(context) ? null : proto.funcOrValue(context);
             case proto_record_1.RECORD_TYPE_LOCAL:
                 return this.locals.get(proto.name);
             case proto_record_1.RECORD_TYPE_INVOKE_METHOD:
                 var context = this._readContext(proto);
+                var args = this._readArgs(proto);
+                return proto.funcOrValue(context, args);
+            case proto_record_1.RECORD_TYPE_SAFE_INVOKE_METHOD:
+                var context = this._readContext(proto);
+                if (lang_1.isBlank(context)) {
+                    return null;
+                }
                 var args = this._readArgs(proto);
                 return proto.funcOrValue(context, args);
             case proto_record_1.RECORD_TYPE_KEYED_ACCESS:

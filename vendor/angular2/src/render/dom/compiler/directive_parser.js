@@ -61,8 +61,8 @@ var DirectiveParser = (function () {
             var directiveBinderBuilder = elementBinder.bindDirective(directiveIndex);
             current.compileChildren = current.compileChildren && directive.compileChildren;
             if (lang_1.isPresent(directive.properties)) {
-                collection_1.MapWrapper.forEach(directive.properties, function (bindConfig, dirProperty) {
-                    _this._bindDirectiveProperty(dirProperty, bindConfig, current, directiveBinderBuilder);
+                collection_1.ListWrapper.forEach(directive.properties, function (bindConfig) {
+                    _this._bindDirectiveProperty(bindConfig, current, directiveBinderBuilder);
                 });
             }
             if (lang_1.isPresent(directive.hostListeners)) {
@@ -90,9 +90,26 @@ var DirectiveParser = (function () {
             }
         });
     };
-    DirectiveParser.prototype._bindDirectiveProperty = function (dirProperty, bindConfig, compileElement, directiveBinderBuilder) {
-        var pipes = this._splitBindConfig(bindConfig);
-        var elProp = collection_1.ListWrapper.removeAt(pipes, 0);
+    DirectiveParser.prototype._bindDirectiveProperty = function (bindConfig, compileElement, directiveBinderBuilder) {
+        // Name of the property on the directive
+        var dirProperty;
+        // Name of the property on the element
+        var elProp;
+        var pipes;
+        var assignIndex = bindConfig.indexOf(':');
+        if (assignIndex > -1) {
+            // canonical syntax: `dirProp: elProp | pipe0 | ... | pipeN`
+            dirProperty = lang_1.StringWrapper.substring(bindConfig, 0, assignIndex).trim();
+            pipes = this._splitBindConfig(lang_1.StringWrapper.substring(bindConfig, assignIndex + 1));
+            elProp = collection_1.ListWrapper.removeAt(pipes, 0);
+        }
+        else {
+            // shorthand syntax when the name of the property on the directive and on the element is the
+            // same, ie `property`
+            dirProperty = bindConfig;
+            elProp = bindConfig;
+            pipes = [];
+        }
         var bindingAst = collection_1.MapWrapper.get(compileElement.bindElement().propertyBindings, util_1.dashCaseToCamelCase(elProp));
         if (lang_1.isBlank(bindingAst)) {
             var attributeValue = collection_1.MapWrapper.get(compileElement.attrs(), util_1.camelCaseToDashCase(elProp));

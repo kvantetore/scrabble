@@ -41,5 +41,6 @@ export declare class ChangeDetectionUtil {
     static changeDetectionMode(strategy: string): string;
     static simpleChange(previousValue: any, currentValue: any): SimpleChange;
     static addChange(changes: any, propertyName: string, change: any): any;
+    static isValueBlank(value: any): boolean;
 }
 export declare var __esModule: boolean;

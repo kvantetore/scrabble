@@ -41,6 +41,15 @@ export declare class AccessMember extends AST {
     assign(context: any, locals: any, value: any): any;
     visit(visitor: any): any;
 }
+export declare class SafeAccessMember extends AST {
+    receiver: AST;
+    name: string;
+    getter: Function;
+    setter: Function;
+    constructor(receiver: AST, name: string, getter: Function, setter: Function);
+    eval(context: any, locals: any): any;
+    visit(visitor: any): any;
+}
 export declare class KeyedAccess extends AST {
     obj: AST;
     key: AST;
@@ -114,6 +123,15 @@ export declare class MethodCall extends AST {
     eval(context: any, locals: any): any;
     visit(visitor: any): any;
 }
+export declare class SafeMethodCall extends AST {
+    receiver: AST;
+    name: string;
+    fn: Function;
+    args: List<any>;
+    constructor(receiver: AST, name: string, fn: Function, args: List<any>);
+    eval(context: any, locals: any): any;
+    visit(visitor: any): any;
+}
 export declare class FunctionCall extends AST {
     target: AST;
     args: List<any>;
@@ -154,13 +172,17 @@ export declare class AstVisitor {
     visitLiteralPrimitive(ast: LiteralPrimitive): void;
     visitMethodCall(ast: MethodCall): void;
     visitPrefixNot(ast: PrefixNot): void;
+    visitSafeAccessMember(ast: SafeAccessMember): void;
+    visitSafeMethodCall(ast: SafeMethodCall): void;
 }
 export declare class AstTransformer {
     visitImplicitReceiver(ast: ImplicitReceiver): ImplicitReceiver;
     visitInterpolation(ast: Interpolation): Interpolation;
     visitLiteralPrimitive(ast: LiteralPrimitive): LiteralPrimitive;
     visitAccessMember(ast: AccessMember): AccessMember;
+    visitSafeAccessMember(ast: SafeAccessMember): SafeAccessMember;
     visitMethodCall(ast: MethodCall): MethodCall;
+    visitSafeMethodCall(ast: SafeMethodCall): SafeMethodCall;
     visitFunctionCall(ast: FunctionCall): FunctionCall;
     visitLiteralArray(ast: LiteralArray): LiteralArray;
     visitLiteralMap(ast: LiteralMap): LiteralMap;

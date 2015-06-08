@@ -1,6 +1,6 @@
 import { Type } from 'angular2/src/facade/lang';
 export interface ForwardRefFn {
-    (): Type;
+    (): any;
 }
 /**
  * Allows to refer to references which are not yet defined.
@@ -29,6 +29,7 @@ export interface ForwardRefFn {
  * @exportedAs angular2/di
  */
 export declare function forwardRef(forwardRefFn: ForwardRefFn): Type;
+export declare var FORWARD_REF: typeof forwardRef;
 /**
  * Lazily retrieve the reference value.
  *

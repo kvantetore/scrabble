@@ -24,11 +24,41 @@ var createMapFromPairs = (function () {
         return map;
     };
 })();
+var createMapFromMap = (function () {
+    try {
+        if (new exports.Map(new exports.Map())) {
+            return function createMapFromMap(m) { return new exports.Map(m); };
+        }
+    }
+    catch (e) {
+    }
+    return function createMapAndPopulateFromMap(m) {
+        var map = new exports.Map();
+        m.forEach(function (v, k) { map.set(k, v); });
+        return map;
+    };
+})();
+var _clearValues = (function () {
+    if ((new exports.Map()).keys().next) {
+        return function _clearValues(m) {
+            var keyIterator = m.keys();
+            var k;
+            while (!((k = keyIterator.next()).done)) {
+                m.set(k.value, null);
+            }
+        };
+    }
+    else {
+        return function _clearValuesWithForeEach(m) {
+            m.forEach(function (v, k) { m.set(k, null); });
+        };
+    }
+})();
 var MapWrapper = (function () {
     function MapWrapper() {
     }
     MapWrapper.create = function () { return new exports.Map(); };
-    MapWrapper.clone = function (m) { return new exports.Map(m); };
+    MapWrapper.clone = function (m) { return createMapFromMap(m); };
     MapWrapper.createFromStringMap = function (stringMap) {
         var result = MapWrapper.create();
         for (var prop in stringMap) {
@@ -44,13 +74,7 @@ var MapWrapper = (function () {
     MapWrapper.size = function (m) { return m.size; };
     MapWrapper.delete = function (m, k) { m.delete(k); };
     MapWrapper.clear = function (m) { m.clear(); };
-    MapWrapper.clearValues = function (m) {
-        var keyIterator = m.keys();
-        var k;
-        while (!((k = keyIterator.next()).done)) {
-            m.set(k.value, null);
-        }
-    };
+    MapWrapper.clearValues = function (m) { _clearValues(m); };
     MapWrapper.iterable = function (m) { return m; };
     MapWrapper.keys = function (m) { return m.keys(); };
     MapWrapper.values = function (m) { return m.values(); };
@@ -154,7 +178,7 @@ var ListWrapper = (function () {
         return null;
     };
     ListWrapper.indexOf = function (array, value, startIndex) {
-        if (startIndex === void 0) { startIndex = -1; }
+        if (startIndex === void 0) { startIndex = 0; }
         return array.indexOf(value, startIndex);
     };
     ListWrapper.reduce = function (list, fn, init) {
@@ -219,7 +243,14 @@ var ListWrapper = (function () {
         return l.slice(from, to === null ? undefined : to);
     };
     ListWrapper.splice = function (l, from, length) { return l.splice(from, length); };
-    ListWrapper.sort = function (l, compareFn) { l.sort(compareFn); };
+    ListWrapper.sort = function (l, compareFn) {
+        if (lang_1.isPresent(compareFn)) {
+            l.sort(compareFn);
+        }
+        else {
+            l.sort();
+        }
+    };
     return ListWrapper;
 })();
 exports.ListWrapper = ListWrapper;
@@ -246,10 +277,29 @@ function iterateListLike(obj, fn) {
     }
 }
 exports.iterateListLike = iterateListLike;
+// Safari and Internet Explorer do not support the iterable parameter to the
+// Set constructor.  We work around that by manually adding the items.
+var createSetFromList = (function () {
+    var test = new exports.Set([1, 2, 3]);
+    if (test.size === 3) {
+        return function createSetFromList(lst) { return new exports.Set(lst); };
+    }
+    else {
+        return function createSetAndPopulateFromList(lst) {
+            var res = new exports.Set(lst);
+            if (res.size !== lst.length) {
+                for (var i = 0; i < lst.length; i++) {
+                    res.add(lst[i]);
+                }
+            }
+            return res;
+        };
+    }
+})();
 var SetWrapper = (function () {
     function SetWrapper() {
     }
-    SetWrapper.createFromList = function (lst) { return new exports.Set(lst); };
+    SetWrapper.createFromList = function (lst) { return createSetFromList(lst); };
     SetWrapper.has = function (s, key) { return s.has(key); };
     return SetWrapper;
 })();

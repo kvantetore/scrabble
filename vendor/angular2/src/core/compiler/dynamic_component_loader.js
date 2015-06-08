@@ -50,7 +50,8 @@ var DynamicComponentLoader = (function () {
         var _this = this;
         if (injector === void 0) { injector = null; }
         var binding = this._getBinding(typeOrBinding);
-        return this._compiler.compile(binding.token).then(function (componentProtoViewRef) {
+        return this._compiler.compile(binding.token)
+            .then(function (componentProtoViewRef) {
             _this._viewManager.createDynamicComponentView(location, componentProtoViewRef, binding, injector);
             var component = _this._viewManager.getComponent(location);
             var dispose = function () { throw new lang_1.BaseException("Not implemented"); };
@@ -66,13 +67,12 @@ var DynamicComponentLoader = (function () {
         var _this = this;
         if (overrideSelector === void 0) { overrideSelector = null; }
         if (injector === void 0) { injector = null; }
-        return this._compiler.compileInHost(this._getBinding(typeOrBinding)).then(function (hostProtoViewRef) {
+        return this._compiler.compileInHost(this._getBinding(typeOrBinding))
+            .then(function (hostProtoViewRef) {
             var hostViewRef = _this._viewManager.createRootHostView(hostProtoViewRef, overrideSelector, injector);
             var newLocation = new element_ref_1.ElementRef(hostViewRef, 0);
             var component = _this._viewManager.getComponent(newLocation);
-            var dispose = function () {
-                _this._viewManager.destroyRootHostView(hostViewRef);
-            };
+            var dispose = function () { _this._viewManager.destroyRootHostView(hostViewRef); };
             return new ComponentRef(newLocation, component, dispose);
         });
     };
@@ -84,7 +84,8 @@ var DynamicComponentLoader = (function () {
     DynamicComponentLoader.prototype.loadIntoNewLocation = function (typeOrBinding, parentComponentLocation, injector) {
         var _this = this;
         if (injector === void 0) { injector = null; }
-        return this._compiler.compileInHost(this._getBinding(typeOrBinding)).then(function (hostProtoViewRef) {
+        return this._compiler.compileInHost(this._getBinding(typeOrBinding))
+            .then(function (hostProtoViewRef) {
             var hostViewRef = _this._viewManager.createFreeHostView(parentComponentLocation, hostProtoViewRef, injector);
             var newLocation = new element_ref_1.ElementRef(hostViewRef, 0);
             var component = _this._viewManager.getComponent(newLocation);

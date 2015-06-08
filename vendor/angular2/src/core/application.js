@@ -29,6 +29,7 @@ var testability_1 = require('angular2/src/core/testability/testability');
 var view_pool_1 = require('angular2/src/core/compiler/view_pool');
 var view_manager_1 = require('angular2/src/core/compiler/view_manager');
 var view_manager_utils_1 = require('angular2/src/core/compiler/view_manager_utils');
+var view_listener_1 = require('angular2/src/core/compiler/view_listener');
 var proto_view_factory_1 = require('angular2/src/core/compiler/proto_view_factory');
 var api_1 = require('angular2/src/render/api');
 var dom_renderer_1 = require('angular2/src/render/dom/dom_renderer');
@@ -68,22 +69,16 @@ function _injectorBindings(appComponentType) {
             .toFactory(function (styleUrlResolver, doc) {
             return new emulated_unscoped_shadow_dom_strategy_1.EmulatedUnscopedShadowDomStrategy(styleUrlResolver, doc.head);
         }, [style_url_resolver_1.StyleUrlResolver, dom_renderer_1.DOCUMENT_TOKEN]),
-        // TODO(tbosch): We need an explicit factory here, as
-        // we are getting errors in dart2js with mirrors...
-        di_1.bind(dom_renderer_1.DomRenderer)
-            .toFactory(function (eventManager, shadowDomStrategy, doc) {
-            return new dom_renderer_1.DomRenderer(eventManager, shadowDomStrategy, doc);
-        }, [event_manager_1.EventManager, shadow_dom_strategy_1.ShadowDomStrategy, dom_renderer_1.DOCUMENT_TOKEN]),
+        dom_renderer_1.DomRenderer,
         compiler_2.DefaultDomCompiler,
         di_1.bind(api_1.Renderer).toAlias(dom_renderer_1.DomRenderer),
         di_1.bind(api_1.RenderCompiler).toAlias(compiler_2.DefaultDomCompiler),
         proto_view_factory_1.ProtoViewFactory,
-        // TODO(tbosch): We need an explicit factory here, as
-        // we are getting errors in dart2js with mirrors...
-        di_1.bind(view_pool_1.AppViewPool).toFactory(function (capacity) { return new view_pool_1.AppViewPool(capacity); }, [view_pool_1.APP_VIEW_POOL_CAPACITY]),
+        view_pool_1.AppViewPool,
         di_1.bind(view_pool_1.APP_VIEW_POOL_CAPACITY).toValue(10000),
         view_manager_1.AppViewManager,
         view_manager_utils_1.AppViewManagerUtils,
+        view_listener_1.AppViewListener,
         compiler_1.Compiler,
         compiler_1.CompilerCache,
         template_resolver_1.TemplateResolver,

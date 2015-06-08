@@ -74,7 +74,7 @@ import { BaseQueryList } from './base_query_list';
  *
  * @exportedAs angular2/view
  */
-export declare class QueryList extends BaseQueryList {
+export declare class QueryList<T> extends BaseQueryList<T> {
     /**
      */
     onChange(callback: any): void;

@@ -9,6 +9,9 @@ exports.RECORD_TYPE_KEYED_ACCESS = 7;
 exports.RECORD_TYPE_PIPE = 8;
 exports.RECORD_TYPE_BINDING_PIPE = 9;
 exports.RECORD_TYPE_INTERPOLATE = 10;
+exports.RECORD_TYPE_SAFE_PROPERTY = 11;
+exports.RECORD_TYPE_SAFE_INVOKE_METHOD = 12;
+exports.RECORD_TYPE_DIRECTIVE_LIFECYCLE = 13;
 var ProtoRecord = (function () {
     function ProtoRecord(mode, name, funcOrValue, args, fixedArgs, contextIndex, directiveIndex, selfIndex, bindingRecord, expressionAsString, lastInBinding, lastInDirective) {
         this.mode = mode;
@@ -27,6 +30,10 @@ var ProtoRecord = (function () {
     ProtoRecord.prototype.isPureFunction = function () {
         return this.mode === exports.RECORD_TYPE_INTERPOLATE || this.mode === exports.RECORD_TYPE_PRIMITIVE_OP;
     };
+    ProtoRecord.prototype.isPipeRecord = function () {
+        return this.mode === exports.RECORD_TYPE_PIPE || this.mode === exports.RECORD_TYPE_BINDING_PIPE;
+    };
+    ProtoRecord.prototype.isLifeCycleRecord = function () { return this.mode === exports.RECORD_TYPE_DIRECTIVE_LIFECYCLE; };
     return ProtoRecord;
 })();
 exports.ProtoRecord = ProtoRecord;

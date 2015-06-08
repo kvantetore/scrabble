@@ -91,6 +91,7 @@ var ReflectionCapabilities = (function () {
         }
         return [];
     };
+    ReflectionCapabilities.prototype.interfaces = function (type) { throw new lang_1.BaseException("JavaScript does not support interfaces"); };
     ReflectionCapabilities.prototype.getter = function (name) { return new Function('o', 'return o.' + name + ';'); };
     ReflectionCapabilities.prototype.setter = function (name) { return new Function('o', 'v', 'return o.' + name + ' = v;'); };
     ReflectionCapabilities.prototype.method = function (name) {

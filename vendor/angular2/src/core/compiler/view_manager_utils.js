@@ -97,17 +97,32 @@ var AppViewManagerUtils = (function () {
         parentView.changeDetector.removeChild(hostView.changeDetector);
         collection_1.ListWrapper.remove(parentView.freeHostViews, hostView);
     };
+    AppViewManagerUtils.prototype.attachAndHydrateFreeEmbeddedView = function (parentView, boundElementIndex, view, injector) {
+        if (injector === void 0) { injector = null; }
+        parentView.changeDetector.addChild(view.changeDetector);
+        var viewContainer = this._getOrCreateViewContainer(parentView, boundElementIndex);
+        collection_1.ListWrapper.push(viewContainer.freeViews, view);
+        var elementInjector = parentView.elementInjectors[boundElementIndex];
+        for (var i = view.rootElementInjectors.length - 1; i >= 0; i--) {
+            view.rootElementInjectors[i].link(elementInjector);
+        }
+        this._hydrateView(view, injector, elementInjector, parentView.context, parentView.locals);
+    };
+    AppViewManagerUtils.prototype.detachFreeEmbeddedView = function (parentView, boundElementIndex, view) {
+        var viewContainer = parentView.viewContainers[boundElementIndex];
+        view.changeDetector.remove();
+        collection_1.ListWrapper.remove(viewContainer.freeViews, view);
+        for (var i = 0; i < view.rootElementInjectors.length; ++i) {
+            view.rootElementInjectors[i].unlink();
+        }
+    };
     AppViewManagerUtils.prototype.attachViewInContainer = function (parentView, boundElementIndex, contextView, contextBoundElementIndex, atIndex, view) {
         if (lang_1.isBlank(contextView)) {
             contextView = parentView;
             contextBoundElementIndex = boundElementIndex;
         }
         parentView.changeDetector.addChild(view.changeDetector);
-        var viewContainer = parentView.viewContainers[boundElementIndex];
-        if (lang_1.isBlank(viewContainer)) {
-            viewContainer = new viewModule.AppViewContainer();
-            parentView.viewContainers[boundElementIndex] = viewContainer;
-        }
+        var viewContainer = this._getOrCreateViewContainer(parentView, boundElementIndex);
         collection_1.ListWrapper.insert(viewContainer.views, atIndex, view);
         var sibling;
         if (atIndex == 0) {
@@ -182,6 +197,14 @@ var AppViewManagerUtils = (function () {
             }
         }
         view.changeDetector.hydrate(view.context, view.locals, view);
+    };
+    AppViewManagerUtils.prototype._getOrCreateViewContainer = function (parentView, boundElementIndex) {
+        var viewContainer = parentView.viewContainers[boundElementIndex];
+        if (lang_1.isBlank(viewContainer)) {
+            viewContainer = new viewModule.AppViewContainer();
+            parentView.viewContainers[boundElementIndex] = viewContainer;
+        }
+        return viewContainer;
     };
     AppViewManagerUtils.prototype._setUpEventEmitters = function (view, elementInjector, boundElementIndex) {
         var emitters = elementInjector.getEventEmitterAccessors();

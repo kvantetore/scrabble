@@ -7,7 +7,7 @@ var _SELECTOR_REGEXP = lang_1.RegExpWrapper.create('(\\:not\\()|' +
     '([-\\w]+)|' +
     '(?:\\.([-\\w]+))|' +
     '(?:\\[([-\\w*]+)(?:=([^\\]]*))?\\])|' +
-    '(?:\\))|' +
+    '(\\))|' +
     '(\\s*,\\s*)'); // ","
 /**
  * A css selector contains an element name,
@@ -19,12 +19,12 @@ var CssSelector = (function () {
         this.element = null;
         this.classNames = collection_1.ListWrapper.create();
         this.attrs = collection_1.ListWrapper.create();
-        this.notSelector = null;
+        this.notSelectors = collection_1.ListWrapper.create();
     }
     CssSelector.parse = function (selector) {
         var results = collection_1.ListWrapper.create();
         var _addResult = function (res, cssSel) {
-            if (lang_1.isPresent(cssSel.notSelector) && lang_1.isBlank(cssSel.element) &&
+            if (cssSel.notSelectors.length > 0 && lang_1.isBlank(cssSel.element) &&
                 collection_1.ListWrapper.isEmpty(cssSel.classNames) && collection_1.ListWrapper.isEmpty(cssSel.attrs)) {
                 cssSel.element = "*";
             }
@@ -34,13 +34,15 @@ var CssSelector = (function () {
         var matcher = lang_1.RegExpWrapper.matcher(_SELECTOR_REGEXP, selector);
         var match;
         var current = cssSelector;
+        var inNot = false;
         while (lang_1.isPresent(match = lang_1.RegExpMatcherWrapper.next(matcher))) {
             if (lang_1.isPresent(match[1])) {
-                if (lang_1.isPresent(cssSelector.notSelector)) {
+                if (inNot) {
                     throw new lang_1.BaseException('Nesting :not is not allowed in a selector');
                 }
-                current.notSelector = new CssSelector();
-                current = current.notSelector;
+                inNot = true;
+                current = new CssSelector();
+                collection_1.ListWrapper.push(cssSelector.notSelectors, current);
             }
             if (lang_1.isPresent(match[2])) {
                 current.setElement(match[2]);
@@ -52,6 +54,13 @@ var CssSelector = (function () {
                 current.addAttribute(match[4], match[5]);
             }
             if (lang_1.isPresent(match[6])) {
+                inNot = false;
+                current = cssSelector;
+            }
+            if (lang_1.isPresent(match[7])) {
+                if (inNot) {
+                    throw new lang_1.BaseException('Multiple selectors in :not are not supported');
+                }
                 _addResult(results, cssSelector);
                 cssSelector = current = new CssSelector();
             }
@@ -61,7 +70,7 @@ var CssSelector = (function () {
     };
     CssSelector.prototype.isElementSelector = function () {
         return lang_1.isPresent(this.element) && collection_1.ListWrapper.isEmpty(this.classNames) &&
-            collection_1.ListWrapper.isEmpty(this.attrs) && lang_1.isBlank(this.notSelector);
+            collection_1.ListWrapper.isEmpty(this.attrs) && this.notSelectors.length === 0;
     };
     CssSelector.prototype.setElement = function (element) {
         if (element === void 0) { element = null; }
@@ -81,9 +90,7 @@ var CssSelector = (function () {
         }
         collection_1.ListWrapper.push(this.attrs, value);
     };
-    CssSelector.prototype.addClassName = function (name) {
-        collection_1.ListWrapper.push(this.classNames, name.toLowerCase());
-    };
+    CssSelector.prototype.addClassName = function (name) { collection_1.ListWrapper.push(this.classNames, name.toLowerCase()); };
     CssSelector.prototype.toString = function () {
         var res = '';
         if (lang_1.isPresent(this.element)) {
@@ -105,9 +112,7 @@ var CssSelector = (function () {
                 res += ']';
             }
         }
-        if (lang_1.isPresent(this.notSelector)) {
-            res += ":not(" + this.notSelector.toString() + ")";
-        }
+        collection_1.ListWrapper.forEach(this.notSelectors, function (notSelector) { res += ":not(" + notSelector.toString() + ")"; });
         return res;
     };
     return CssSelector;
@@ -127,9 +132,9 @@ var SelectorMatcher = (function () {
         this._attrValuePartialMap = collection_1.MapWrapper.create();
         this._listContexts = collection_1.ListWrapper.create();
     }
-    SelectorMatcher.createNotMatcher = function (notSelector) {
+    SelectorMatcher.createNotMatcher = function (notSelectors) {
         var notMatcher = new SelectorMatcher();
-        notMatcher._addSelectable(notSelector, null, null);
+        notMatcher.addSelectables(notSelectors, null);
         return notMatcher;
     };
     SelectorMatcher.prototype.addSelectables = function (cssSelectors, callbackCtxt) {
@@ -309,15 +314,15 @@ var SelectorListContext = (function () {
 var SelectorContext = (function () {
     function SelectorContext(selector, cbContext, listContext) {
         this.selector = selector;
-        this.notSelector = selector.notSelector;
+        this.notSelectors = selector.notSelectors;
         this.cbContext = cbContext;
         this.listContext = listContext;
     }
     SelectorContext.prototype.finalize = function (cssSelector, callback /*: (CssSelector, any) => void*/) {
         var result = true;
-        if (lang_1.isPresent(this.notSelector) &&
+        if (this.notSelectors.length > 0 &&
             (lang_1.isBlank(this.listContext) || !this.listContext.alreadyMatched)) {
-            var notMatcher = SelectorMatcher.createNotMatcher(this.notSelector);
+            var notMatcher = SelectorMatcher.createNotMatcher(this.notSelectors);
             result = !notMatcher.match(cssSelector, null);
         }
         if (result && lang_1.isPresent(callback) &&

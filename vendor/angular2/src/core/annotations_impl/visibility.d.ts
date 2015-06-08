@@ -2,8 +2,9 @@ import { DependencyAnnotation } from 'angular2/src/di/annotations_impl';
 export declare class Visibility extends DependencyAnnotation {
     depth: number;
     crossComponentBoundaries: boolean;
-    constructor(depth: number, crossComponentBoundaries: boolean);
-    shouldIncludeSelf(): boolean;
+    _includeSelf: boolean;
+    constructor(depth: number, crossComponentBoundaries: boolean, _includeSelf: boolean);
+    includeSelf: boolean;
 }
 /**
  * Specifies that an injector should retrieve a dependency from its element.
@@ -15,9 +16,9 @@ export declare class Visibility extends DependencyAnnotation {
  * ```
  * @Directive({
  *   selector: '[dependency]',
- *   properties: {
- *     'id':'dependency'
- *   }
+ *   properties: [
+ *     'id: dependency'
+ *   ]
  * })
  * class Dependency {
  *   id:string;
@@ -56,9 +57,9 @@ export declare var self: Self;
  * ```
  * @Directive({
  *   selector: '[dependency]',
- *   properties: {
- *     'id':'dependency'
- *   }
+ *   properties: [
+ *     'id: dependency'
+ *   ]
  * })
  * class Dependency {
  *   id:string;
@@ -90,7 +91,9 @@ export declare var self: Self;
  * @exportedAs angular2/annotations
  */
 export declare class Parent extends Visibility {
-    constructor();
+    constructor({self}?: {
+        self?: boolean;
+    });
 }
 /**
  * Specifies that an injector should retrieve a dependency from any ancestor element within the same
@@ -106,9 +109,9 @@ export declare class Parent extends Visibility {
  * ```
  * @Directive({
  *   selector: '[dependency]',
- *   properties: {
- *     'id':'dependency'
- *   }
+ *   properties: [
+ *     'id: dependency'
+ *   ]
  * })
  * class Dependency {
  *   id:string;
@@ -149,7 +152,9 @@ export declare class Parent extends Visibility {
  * @exportedAs angular2/annotations
  */
 export declare class Ancestor extends Visibility {
-    constructor();
+    constructor({self}?: {
+        self?: boolean;
+    });
 }
 /**
  * Specifies that an injector should retrieve a dependency from any ancestor element.
@@ -164,9 +169,9 @@ export declare class Ancestor extends Visibility {
  * ```
  * @Directive({
  *   selector: '[dependency]',
- *   properties: {
- *     'id':'dependency'
- *   }
+ *   properties: [
+ *     'id: dependency'
+ *   ]
  * })
  * class Dependency {
  *   id:string;
@@ -186,6 +191,8 @@ export declare class Ancestor extends Visibility {
  * @exportedAs angular2/annotations
  */
 export declare class Unbounded extends Visibility {
-    constructor();
+    constructor({self}?: {
+        self?: boolean;
+    });
 }
 export declare var __esModule: boolean;

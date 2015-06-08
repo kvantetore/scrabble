@@ -1,4 +1,3 @@
-import { Directive } from 'angular2/src/core/annotations_impl/annotations';
 /**
  * Injectable Objects that contains a live list of child directives in the light Dom of a directive.
  * The directives are kept in depth-first pre-order traversal of the DOM.
@@ -8,8 +7,8 @@ import { Directive } from 'angular2/src/core/annotations_impl/annotations';
  *
  * @exportedAs angular2/view
  */
-export declare class BaseQueryList {
-    _results: List<Directive>;
+export declare class BaseQueryList<T> {
+    _results: List<T>;
     _callbacks: any;
     _dirty: any;
     constructor();

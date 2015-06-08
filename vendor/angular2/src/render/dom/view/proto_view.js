@@ -23,9 +23,10 @@ var DomProtoViewRef = (function (_super) {
 exports.DomProtoViewRef = DomProtoViewRef;
 var DomProtoView = (function () {
     function DomProtoView(_a) {
-        var elementBinders = _a.elementBinders, element = _a.element;
+        var elementBinders = _a.elementBinders, element = _a.element, transitiveContentTagCount = _a.transitiveContentTagCount;
         this.element = element;
         this.elementBinders = elementBinders;
+        this.transitiveContentTagCount = transitiveContentTagCount;
         this.isTemplateElement = dom_adapter_1.DOM.isTemplateElement(this.element);
         this.rootBindingOffset =
             (lang_1.isPresent(this.element) && dom_adapter_1.DOM.hasClass(this.element, util_1.NG_BINDING_CLASS)) ? 1 : 0;

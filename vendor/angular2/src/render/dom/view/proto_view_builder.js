@@ -39,6 +39,7 @@ var ProtoViewBuilder = (function () {
     ProtoViewBuilder.prototype.build = function () {
         var renderElementBinders = [];
         var apiElementBinders = [];
+        var transitiveContentTagCount = 0;
         collection_1.ListWrapper.forEach(this.elements, function (ebb) {
             var propertySetters = collection_1.MapWrapper.create();
             var hostActions = collection_1.MapWrapper.create();
@@ -61,6 +62,13 @@ var ProtoViewBuilder = (function () {
                 collection_1.MapWrapper.set(propertySetters, propertyName, property_setter_factory_1.setterFactory(propertyName));
             });
             var nestedProtoView = lang_1.isPresent(ebb.nestedProtoView) ? ebb.nestedProtoView.build() : null;
+            var nestedRenderProtoView = lang_1.isPresent(nestedProtoView) ? proto_view_1.resolveInternalDomProtoView(nestedProtoView.render) : null;
+            if (lang_1.isPresent(nestedRenderProtoView)) {
+                transitiveContentTagCount += nestedRenderProtoView.transitiveContentTagCount;
+            }
+            if (lang_1.isPresent(ebb.contentTagSelector)) {
+                transitiveContentTagCount++;
+            }
             var parentIndex = lang_1.isPresent(ebb.parent) ? ebb.parent.index : -1;
             collection_1.ListWrapper.push(apiElementBinders, new api.ElementBinder({
                 index: ebb.index,
@@ -91,7 +99,11 @@ var ProtoViewBuilder = (function () {
             }));
         });
         return new api.ProtoViewDto({
-            render: new proto_view_1.DomProtoViewRef(new proto_view_1.DomProtoView({ element: this.rootElement, elementBinders: renderElementBinders })),
+            render: new proto_view_1.DomProtoViewRef(new proto_view_1.DomProtoView({
+                element: this.rootElement,
+                elementBinders: renderElementBinders,
+                transitiveContentTagCount: transitiveContentTagCount
+            })),
             type: this.type,
             elementBinders: apiElementBinders,
             variableBindings: this.variableBindings

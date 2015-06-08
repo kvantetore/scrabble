@@ -3,13 +3,11 @@ import { Type } from 'angular2/src/facade/lang';
  * Declares the available HTML templates for an application.
  *
  * Each angular component requires a single `@Component` and at least one `@View` annotation. The
- * @View
- * annotation specifies the HTML template to use, and lists the directives that are active within
- * the template.
+ * `@View` annotation specifies the HTML template to use, and lists the directives that are active
+ * within the template.
  *
  * When a component is instantiated, the template is loaded into the component's shadow root, and
- * the
- * expressions and statements in the template are evaluated against the component.
+ * the expressions and statements in the template are evaluated against the component.
  *
  * For details on the `@Component` annotation, see {@link Component}.
  *
@@ -69,7 +67,7 @@ export declare class View {
      * }
      * ```
      */
-    directives: List<Type>;
+    directives: List<Type | any | List<any>>;
     /**
      * Specify a custom renderer for this View.
      * If this is set, neither `template`, `templateURL` nor `directives` are used.
@@ -78,7 +76,7 @@ export declare class View {
     constructor({templateUrl, template, directives, renderer}?: {
         templateUrl?: string;
         template?: string;
-        directives?: List<Type>;
+        directives?: List<Type | any | List<any>>;
         renderer?: string;
     });
 }

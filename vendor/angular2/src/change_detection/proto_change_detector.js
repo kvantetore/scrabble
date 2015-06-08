@@ -27,7 +27,7 @@ var DynamicProtoChangeDetector = (function (_super) {
     };
     DynamicProtoChangeDetector.prototype._createRecords = function (definition) {
         var recordBuilder = new ProtoRecordBuilder();
-        collection_1.ListWrapper.forEach(definition.bindingRecords, function (b) { recordBuilder.addAst(b, definition.variableNames); });
+        collection_1.ListWrapper.forEach(definition.bindingRecords, function (b) { recordBuilder.add(b, definition.variableNames); });
         return coalesce_1.coalesce(recordBuilder.records);
     };
     return DynamicProtoChangeDetector;
@@ -45,7 +45,7 @@ var JitProtoChangeDetector = (function (_super) {
     JitProtoChangeDetector.prototype.instantiate = function (dispatcher) { return this._factory(dispatcher, this._pipeRegistry); };
     JitProtoChangeDetector.prototype._createFactory = function (definition) {
         var recordBuilder = new ProtoRecordBuilder();
-        collection_1.ListWrapper.forEach(definition.bindingRecords, function (b) { recordBuilder.addAst(b, definition.variableNames); });
+        collection_1.ListWrapper.forEach(definition.bindingRecords, function (b) { recordBuilder.add(b, definition.variableNames); });
         var c = _jitProtoChangeDetectorClassCounter++;
         var records = coalesce_1.coalesce(recordBuilder.records);
         var typeName = "ChangeDetector" + c;
@@ -59,17 +59,26 @@ var ProtoRecordBuilder = (function () {
     function ProtoRecordBuilder() {
         this.records = [];
     }
-    ProtoRecordBuilder.prototype.addAst = function (b, variableNames) {
+    ProtoRecordBuilder.prototype.add = function (b, variableNames) {
         if (variableNames === void 0) { variableNames = null; }
         var oldLast = collection_1.ListWrapper.last(this.records);
         if (lang_1.isPresent(oldLast) && oldLast.bindingRecord.directiveRecord == b.directiveRecord) {
             oldLast.lastInDirective = false;
         }
-        _ConvertAstIntoProtoRecords.append(this.records, b, variableNames);
+        this._appendRecords(b, variableNames);
         var newLast = collection_1.ListWrapper.last(this.records);
         if (lang_1.isPresent(newLast) && newLast !== oldLast) {
             newLast.lastInBinding = true;
             newLast.lastInDirective = true;
+        }
+    };
+    ProtoRecordBuilder.prototype._appendRecords = function (b, variableNames) {
+        if (b.isDirectiveLifecycle()) {
+            ;
+            collection_1.ListWrapper.push(this.records, new proto_record_1.ProtoRecord(proto_record_1.RECORD_TYPE_DIRECTIVE_LIFECYCLE, b.lifecycleEvent, null, [], [], -1, null, this.records.length + 1, b, null, false, false));
+        }
+        else {
+            _ConvertAstIntoProtoRecords.append(this.records, b, variableNames);
         }
     };
     return ProtoRecordBuilder;
@@ -104,6 +113,10 @@ var _ConvertAstIntoProtoRecords = (function () {
             return this._addRecord(proto_record_1.RECORD_TYPE_PROPERTY, ast.name, ast.getter, [], null, receiver);
         }
     };
+    _ConvertAstIntoProtoRecords.prototype.visitSafeAccessMember = function (ast) {
+        var receiver = ast.receiver.visit(this);
+        return this._addRecord(proto_record_1.RECORD_TYPE_SAFE_PROPERTY, ast.name, ast.getter, [], null, receiver);
+    };
     _ConvertAstIntoProtoRecords.prototype.visitMethodCall = function (ast) {
         var receiver = ast.receiver.visit(this);
         var args = this._visitAll(ast.args);
@@ -114,6 +127,11 @@ var _ConvertAstIntoProtoRecords = (function () {
         else {
             return this._addRecord(proto_record_1.RECORD_TYPE_INVOKE_METHOD, ast.name, ast.fn, args, null, receiver);
         }
+    };
+    _ConvertAstIntoProtoRecords.prototype.visitSafeMethodCall = function (ast) {
+        var receiver = ast.receiver.visit(this);
+        var args = this._visitAll(ast.args);
+        return this._addRecord(proto_record_1.RECORD_TYPE_SAFE_INVOKE_METHOD, ast.name, ast.fn, args, null, receiver);
     };
     _ConvertAstIntoProtoRecords.prototype.visitFunctionCall = function (ast) {
         var target = ast.target.visit(this);

@@ -19,15 +19,20 @@ var lang_1 = require('angular2/src/facade/lang');
 var annotations_impl_1 = require('angular2/src/di/annotations_impl');
 var Visibility = (function (_super) {
     __extends(Visibility, _super);
-    function Visibility(depth, crossComponentBoundaries) {
+    function Visibility(depth, crossComponentBoundaries, _includeSelf) {
         _super.call(this);
         this.depth = depth;
         this.crossComponentBoundaries = crossComponentBoundaries;
+        this._includeSelf = _includeSelf;
     }
-    Visibility.prototype.shouldIncludeSelf = function () { return this.depth === 0; };
+    Object.defineProperty(Visibility.prototype, "includeSelf", {
+        get: function () { return lang_1.isBlank(this._includeSelf) ? false : this._includeSelf; },
+        enumerable: true,
+        configurable: true
+    });
     Visibility = __decorate([
         lang_1.CONST(), 
-        __metadata('design:paramtypes', [Number, Boolean])
+        __metadata('design:paramtypes', [Number, Boolean, Boolean])
     ], Visibility);
     return Visibility;
 })(annotations_impl_1.DependencyAnnotation);
@@ -42,9 +47,9 @@ exports.Visibility = Visibility;
  * ```
  * @Directive({
  *   selector: '[dependency]',
- *   properties: {
- *     'id':'dependency'
- *   }
+ *   properties: [
+ *     'id: dependency'
+ *   ]
  * })
  * class Dependency {
  *   id:string;
@@ -72,7 +77,7 @@ exports.Visibility = Visibility;
 var Self = (function (_super) {
     __extends(Self, _super);
     function Self() {
-        _super.call(this, 0, false);
+        _super.call(this, 0, false, true);
     }
     Self = __decorate([
         lang_1.CONST(), 
@@ -93,9 +98,9 @@ exports.self = new Self();
  * ```
  * @Directive({
  *   selector: '[dependency]',
- *   properties: {
- *     'id':'dependency'
- *   }
+ *   properties: [
+ *     'id: dependency'
+ *   ]
  * })
  * class Dependency {
  *   id:string;
@@ -128,12 +133,13 @@ exports.self = new Self();
  */
 var Parent = (function (_super) {
     __extends(Parent, _super);
-    function Parent() {
-        _super.call(this, 1, false);
+    function Parent(_a) {
+        var self = (_a === void 0 ? {} : _a).self;
+        _super.call(this, 1, false, self);
     }
     Parent = __decorate([
         lang_1.CONST(), 
-        __metadata('design:paramtypes', [])
+        __metadata('design:paramtypes', [Object])
     ], Parent);
     return Parent;
 })(Visibility);
@@ -152,9 +158,9 @@ exports.Parent = Parent;
  * ```
  * @Directive({
  *   selector: '[dependency]',
- *   properties: {
- *     'id':'dependency'
- *   }
+ *   properties: [
+ *     'id: dependency'
+ *   ]
  * })
  * class Dependency {
  *   id:string;
@@ -196,12 +202,13 @@ exports.Parent = Parent;
  */
 var Ancestor = (function (_super) {
     __extends(Ancestor, _super);
-    function Ancestor() {
-        _super.call(this, 999999, false);
+    function Ancestor(_a) {
+        var self = (_a === void 0 ? {} : _a).self;
+        _super.call(this, 999999, false, self);
     }
     Ancestor = __decorate([
         lang_1.CONST(), 
-        __metadata('design:paramtypes', [])
+        __metadata('design:paramtypes', [Object])
     ], Ancestor);
     return Ancestor;
 })(Visibility);
@@ -219,9 +226,9 @@ exports.Ancestor = Ancestor;
  * ```
  * @Directive({
  *   selector: '[dependency]',
- *   properties: {
- *     'id':'dependency'
- *   }
+ *   properties: [
+ *     'id: dependency'
+ *   ]
  * })
  * class Dependency {
  *   id:string;
@@ -242,12 +249,13 @@ exports.Ancestor = Ancestor;
  */
 var Unbounded = (function (_super) {
     __extends(Unbounded, _super);
-    function Unbounded() {
-        _super.call(this, 999999, true);
+    function Unbounded(_a) {
+        var self = (_a === void 0 ? {} : _a).self;
+        _super.call(this, 999999, true, self);
     }
     Unbounded = __decorate([
         lang_1.CONST(), 
-        __metadata('design:paramtypes', [])
+        __metadata('design:paramtypes', [Object])
     ], Unbounded);
     return Unbounded;
 })(Visibility);

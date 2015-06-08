@@ -20,6 +20,7 @@ export declare class AbstractControl {
     _status: string;
     _errors: StringMap<string, any>;
     _pristine: boolean;
+    _touched: boolean;
     _parent: any;
     validator: Function;
     _valueChanges: EventEmitter;
@@ -30,9 +31,22 @@ export declare class AbstractControl {
     errors: StringMap<string, any>;
     pristine: boolean;
     dirty: boolean;
+    touched: boolean;
+    untouched: boolean;
     valueChanges: Observable;
+    markAsTouched(): void;
+    markAsDirty({onlySelf}?: {
+        onlySelf?: boolean;
+    }): void;
     setParent(parent: any): void;
-    _updateParent(): void;
+    updateValidity({onlySelf}?: {
+        onlySelf?: boolean;
+    }): void;
+    updateValueAndValidity({onlySelf, emitEvent}?: {
+        onlySelf?: boolean;
+        emitEvent?: boolean;
+    }): void;
+    _updateValue(): void;
 }
 /**
  * Defines a part of a form that cannot be divided into other controls.
@@ -44,9 +58,13 @@ export declare class AbstractControl {
  * @exportedAs angular2/forms
  */
 export declare class Control extends AbstractControl {
+    _onChange: Function;
     constructor(value: any, validator?: Function);
-    updateValue(value: any): void;
-    _setValueErrorsStatus(value: any): void;
+    updateValue(value: any, {onlySelf, emitEvent}?: {
+        onlySelf?: boolean;
+        emitEvent?: boolean;
+    }): void;
+    registerOnChange(fn: Function): void;
 }
 /**
  * Defines a part of a form, of fixed length, that can contain other controls.
@@ -69,12 +87,14 @@ export declare class ControlGroup extends AbstractControl {
     controls: StringMap<string, AbstractControl>;
     _optionals: StringMap<string, boolean>;
     constructor(controls: StringMap<String, AbstractControl>, optionals?: StringMap<String, boolean>, validator?: Function);
+    addControl(name: string, c: AbstractControl): void;
+    removeControl(name: string): void;
     include(controlName: string): void;
     exclude(controlName: string): void;
     contains(controlName: string): boolean;
+    find(path: string | List<string>): AbstractControl;
     _setParentForControls(): void;
     _updateValue(): void;
-    _setValueErrorsStatus(): void;
     _reduceValue(): any;
     _reduceChildren(initValue: any, fn: Function): any;
     _included(controlName: string): boolean;
@@ -106,6 +126,5 @@ export declare class ControlArray extends AbstractControl {
     length: number;
     _updateValue(): void;
     _setParentForControls(): void;
-    _setValueErrorsStatus(): void;
 }
 export declare var __esModule: boolean;

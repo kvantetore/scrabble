@@ -17,11 +17,14 @@ export declare class AppViewManagerUtils {
     hydrateRootHostView(hostView: viewModule.AppView, injector?: Injector): void;
     attachAndHydrateFreeHostView(parentComponentHostView: viewModule.AppView, parentComponentBoundElementIndex: number, hostView: viewModule.AppView, injector?: Injector): void;
     detachFreeHostView(parentView: viewModule.AppView, hostView: viewModule.AppView): void;
+    attachAndHydrateFreeEmbeddedView(parentView: viewModule.AppView, boundElementIndex: number, view: viewModule.AppView, injector?: Injector): void;
+    detachFreeEmbeddedView(parentView: viewModule.AppView, boundElementIndex: number, view: viewModule.AppView): void;
     attachViewInContainer(parentView: viewModule.AppView, boundElementIndex: number, contextView: viewModule.AppView, contextBoundElementIndex: number, atIndex: number, view: viewModule.AppView): void;
     detachViewInContainer(parentView: viewModule.AppView, boundElementIndex: number, atIndex: number): void;
     hydrateViewInContainer(parentView: viewModule.AppView, boundElementIndex: number, contextView: viewModule.AppView, contextBoundElementIndex: number, atIndex: number, injector: Injector): void;
     hydrateDynamicComponentInElementInjector(hostView: viewModule.AppView, boundElementIndex: number, componentBinding: Binding, injector?: Injector): void;
     _hydrateView(view: viewModule.AppView, appInjector: Injector, hostElementInjector: eli.ElementInjector, context: Object, parentLocals: Locals): void;
+    _getOrCreateViewContainer(parentView: viewModule.AppView, boundElementIndex: number): viewModule.AppViewContainer;
     _setUpEventEmitters(view: viewModule.AppView, elementInjector: eli.ElementInjector, boundElementIndex: number): void;
     _setUpHostActions(view: viewModule.AppView, elementInjector: eli.ElementInjector, boundElementIndex: number): void;
     dehydrateView(view: viewModule.AppView): void;

@@ -29,6 +29,7 @@ function forwardRef(forwardRefFn) {
     return forwardRefFn;
 }
 exports.forwardRef = forwardRef;
+exports.FORWARD_REF = forwardRef;
 /**
  * Lazily retrieve the reference value.
  *
