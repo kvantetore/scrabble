@@ -1,0 +1,18 @@
+<nav role="menu">
+  <ul>
+    <li><h1>Scrabble Score Keeper</h1></li>
+    <li><input type="button" value="Home" (click)="navigate('/home')" /></li>
+    <li><input type="button" value="New Game" (click)="navigate('/newGame')" /></li>
+  <ul>
+</nav>
+
+<div>
+  {{ name }}
+</div>
+<input type="button" (click)="updateName()" value="Click Me!" />
+
+<input type="button" value="do nothing"/>
+
+<main>
+  <router-outlet></router-outlet>
+</main>
