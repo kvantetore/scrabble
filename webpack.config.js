@@ -12,7 +12,6 @@ module.exports = {
     angular2: [
       // Angular 2 Deps
       'zone.js',
-      // 'zone.js/dist/long-stack-trace-zone.js',
       'reflect-metadata',
       'rtts_assert/rtts_assert',
 
@@ -21,14 +20,10 @@ module.exports = {
       'angular2/angular2'
     ],
     app: [
-      // App
+      // App deps
+      'es6-shim',
 
-      // 'webpack-dev-server/client?http://localhost:8080',
-      // 'webpack/hot/dev-server',
-
-      /*
-      // * include any 3rd party js lib here
-      */
+      // App entry point
       './src/app/bootstrap'
     ]
   },
