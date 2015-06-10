@@ -17,42 +17,11 @@ let template = require("./app.html");
 })
 @RouteConfig([
   {path: "/home", component: HomeComponent, as: "home"},
-  {path: "/newGame", component: NewGameComponent, as: "newgame"},
+  {path: "/newGame", component: NewGameComponent, as: "new-game"},
 ])
 export class AppComponent {
-  name: string = "World";
-
   constructor(private router: Router, private browserLocation: BrowserLocation) {
     let uri = browserLocation.path();
-    this.navigate(uri);
+    this.router.navigate(uri);
   }
-
-  updateName() {
-    setTimeout(() => {
-      this.name = "Universe";
-    }, 1000);
-  }
-
-  navigate(route: string) {
-    this.router.navigate(route);
-  }
-
-  onInit(){
-    console.log('I am from app\'s onInit method');
-  }
-
-  onCheck(){
-    console.log('I am from app\'s onCheck method');
-  }
-
-
-  onChange(changes){
-    console.log('I am from app\'s onChange method');
-    console.log(changes);
-  }
-
-  onAllChangesDone(){
-    console.log('I am from app\'s onAllChangesDone method');
-  }
-
 }

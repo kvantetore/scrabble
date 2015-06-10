@@ -12,5 +12,4 @@ let template = require('./home.html');
   template:`<style>${styles}</style>\n${template}`
 })
 export class HomeComponent {
-  test: string = "my test"
 }

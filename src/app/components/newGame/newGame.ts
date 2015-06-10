@@ -1,4 +1,4 @@
-import {Component, View, coreDirectives, onCheck, onInit, onChange, onAllChangesDone} from 'angular2/angular2';
+import {Component, View, coreDirectives} from 'angular2/angular2';
 
 import {PlayerService} from 'app/api/playerService';
 import {Player} from 'app/models/player';
@@ -15,11 +15,9 @@ let template = require('./newGame.html');
   template:`<style>${styles}</style>\n${template}`,
   directives: [
     coreDirectives
-  ],
-  lifecycle: [onCheck, onInit, onChange, onAllChangesDone]
+  ]
 })
 export class NewGameComponent {
-  name: string = "Test";
   availablePlayers: Player[];
   game: Game;
 
@@ -29,10 +27,6 @@ export class NewGameComponent {
     playerService.listPlayers()
       .then(players => {
         this.availablePlayers = players;
-        setTimeout(() => {
-          this.name = players[0].name;
-        }, 1000)
-        console.log(this.availablePlayers);
       })
   }
 
@@ -40,32 +34,12 @@ export class NewGameComponent {
     return this.game.hasPlayer(player);
   }
 
-  togglePlayerSelect(player: Player) {
+  togglePlayerSelected(player: Player) {
     if (this.isPlayerSelected(player)) {
-      this.game.addPlayer(player);
-    }
-    else {
       this.game.removePlayer(player);
     }
+    else {
+      this.game.addPlayer(player);
+    }
   }
-
-    onInit(){
-      console.log('I am from newGame\'s onInit method');
-    }
-
-    onCheck(){
-      console.log('I am from newGame\'s onCheck method');
-    }
-
-
-    onChange(changes){
-      console.log('I am from newGame\'s onChange method');
-      console.log(changes);
-    }
-
-    onAllChangesDone(){
-      console.log('I am from newGame\'s onAllChangesDone method');
-    }
-
-
 }
