@@ -2,9 +2,22 @@
 
 <h3>Select Players</h3>
 <ul>
-  <li *ng-for="#player of availablePlayers" [class]="{selected: isPlayerSelected(player)}">
+  <li *ng-for="#player of availablePlayers" [class.selected]="isPlayerSelected(player)">
     <button (click)="togglePlayerSelected(player)">
       {{ player.name }}
     </button>
   </li>
 </ul>
+
+<h3>Players</h3>
+<ul>
+  <li *ng-for="#player of game.players">
+    {{ player.name }}
+  </li>
+</ul>
+
+<div>
+  <button (click)="startGame()">
+    start game
+  </button>
+</div>

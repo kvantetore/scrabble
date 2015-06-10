@@ -4,6 +4,7 @@ import {BrowserLocation} from 'angular2/src/router/browser_location';
 
 import {HomeComponent} from './home/home';
 import {NewGameComponent} from './newGame/newGame';
+import {PlayComponent} from './play/play';
 
 let template = require("./app.html");
 
@@ -18,6 +19,7 @@ let template = require("./app.html");
 @RouteConfig([
   {path: "/home", component: HomeComponent, as: "home"},
   {path: "/newGame", component: NewGameComponent, as: "new-game"},
+  {path: "/play/:id", component: PlayComponent, as: "play-game"},
 ])
 export class AppComponent {
   constructor(private router: Router, private browserLocation: BrowserLocation) {

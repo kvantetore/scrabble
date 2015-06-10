@@ -1,6 +1,8 @@
-import {Component, View, coreDirectives} from 'angular2/angular2';
+import {Component, View, coreDirectives, CSSClass} from 'angular2/angular2';
+import {Router} from 'angular2/router';
 
 import {PlayerService} from 'app/api/playerService';
+import {GameService} from 'app/api/gameService';
 import {Player} from 'app/models/player';
 import {Game} from 'app/models/game';
 
@@ -11,17 +13,14 @@ let template = require('./newGame.html');
   selector: "new-game"
 })
 @View({
-  // templateUrl: "newGame/newGame.html",
   template:`<style>${styles}</style>\n${template}`,
-  directives: [
-    coreDirectives
-  ]
+  directives: [coreDirectives]
 })
 export class NewGameComponent {
   availablePlayers: Player[];
   game: Game;
 
-  constructor(private playerService: PlayerService) {
+  constructor(private playerService: PlayerService, private gameService: GameService, private router: Router) {
     this.game = new Game();
 
     playerService.listPlayers()
@@ -41,5 +40,12 @@ export class NewGameComponent {
     else {
       this.game.addPlayer(player);
     }
+  }
+
+  startGame() {
+    this.gameService.save(this.game)
+      .then(game => {
+        this.router.nav
+      })
   }
 }

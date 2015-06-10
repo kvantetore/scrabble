@@ -2,5 +2,9 @@
 <h2>Home</h2>
 
 <h3>Current Games</h3>
-
+<ul>
+  <li *ng-for="#game of games">
+    {{ game.id }}
+  </li>
+</ul>
 </div>

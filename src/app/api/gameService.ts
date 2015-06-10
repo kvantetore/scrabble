@@ -4,6 +4,36 @@ export class GameService {
   private _nextId = 1;
   private _games: {[id: string]: Game} = {};
 
+  constructor() {
+    //add test game
+    this.save(Game.load({
+      players: [{
+        id: 1,
+        name: "Tore"
+      }, {
+        id: 2,
+        name: "Kjersti"
+      }],
+      rounds: [{
+        actions: [{
+            playerId: 1,
+            word: "banan",
+            score: 10
+        }, {
+            playerId: 2,
+            word: "eple",
+            score: 10
+        }]
+      }, {
+        actions: [{
+            playerId: 1,
+            word: "fly",
+            score: 10
+        }]
+      }]
+    }));
+  }
+
   listActiveGames(): Promise<Game[]> {
     var gameList = [];
     for (var gameId in this._games) {
@@ -13,6 +43,18 @@ export class GameService {
     }
 
     return new Promise<Game[]>(resolve => resolve(gameList));
+  }
+
+  getById(id: string) {
+    return new Promise<Game>((resolve, error) => {
+      let game = this._games[id];
+      if (game != null) {
+        resolve(game);
+      }
+      else {
+        error(`Unable to find game with id ${id}`);
+      }
+    })
   }
 
   save(game: Game): Promise<Game> {

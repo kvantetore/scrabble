@@ -25,7 +25,7 @@ export class Game {
   }
 
   static load(data: any) {
-    var game = new Game();
+    let game = new Game();
     game.id = data.id;
     game.players = data.players && data.players.map(p => Player.load(p)) || [];
     game.rounds = data.rounds && data.rounds.map(r => Round.load(r)) || [];
@@ -72,7 +72,7 @@ export class Game {
   }
 
   getNextPlayer() {
-    var currentRound: Round = this.getCurrentRound();
+    let currentRound: Round = this.getCurrentRound();
 
     if (currentRound == null || currentRound.isCompleted(this.players.length)) {
       return this.players[0];
@@ -82,7 +82,7 @@ export class Game {
   }
 
   getCurrentRound() {
-    var currentRound: Round = null;
+    let currentRound: Round = null;
     if (this.rounds.length > 0) {
       currentRound = this.rounds[this.rounds.length - 1];
     }
@@ -90,11 +90,11 @@ export class Game {
   }
 
   addAction(action: Action) {
-    var player = this.getNextPlayer();
+    let player = this.getNextPlayer();
 
     //get or create current round
-    var currentRound = this.getCurrentRound();
-    if (currentRound != null || currentRound.isCompleted(this.players.length)) {
+    let currentRound = this.getCurrentRound();
+    if (currentRound == null || currentRound.isCompleted(this.players.length)) {
       currentRound = new Round();
       this.rounds.push(currentRound);
     }
@@ -103,6 +103,27 @@ export class Game {
     action.playerId = player.id;
     currentRound.addAction(action);
   }
+
+  getPlayerScore(player: Player) {
+    if (player == null) {
+      throw new Error("Cannot find score for null player");
+    }
+    if (!this.players.some(p => p.id === player.id)) {
+      throw new Error(`Player ${player.name} (${player.id}) is not in the player list`)
+    }
+
+    var score = 0;
+    for (let round of this.rounds) {
+      var action = round.actions.find(a => a.playerId === player.id);
+      if (action != null) {
+        score += action.score;
+      }
+    }
+
+    return score;
+  }
+
+
 }
 
 export class Round {
@@ -115,7 +136,7 @@ export class Round {
   }
 
   static load(data: any) {
-    var round = new Round();
+    let round = new Round();
     round.actions = data.actions && data.actions.map(a => Action.load(a)) || [];
     return round;
   }
@@ -126,6 +147,20 @@ export class Round {
 
   isCompleted(playerCount: number) {
     return this.actions.length >= playerCount;
+  }
+
+  getPlayerActions(players: Player[]) {
+    return players.map(p => this.getPlayerAction(p));
+  }
+
+  getPlayerAction(player: Player) {
+    if (player == null) {
+      throw new Error("Cannot find action for null player");
+    }
+    if (player.id == null) {
+      throw new Error("Cannot find action for player without id");
+    }
+    return this.actions.find(a => a.playerId == player.id);
   }
 }
 
@@ -146,7 +181,7 @@ export class Action {
   }
 
   static load(data: any) {
-    var action = new Action();
+    let action = new Action();
     action.playerId = data.playerId;
     action.date = data.date && parseDate(data.date) || null;
     action.word = data.word;

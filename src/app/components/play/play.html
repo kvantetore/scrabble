@@ -1,0 +1,55 @@
+<h2>Play</h2>
+
+<div *ng-if="game == null">
+  Loading game...
+</div>
+<div *ng-if="game != null">
+
+<table>
+  <thead>
+    <tr>
+      <th>round</th>
+      <th *ng-for="var player of game.players">
+        {{ player.name }}
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ng-for="var round of game.rounds; #roundNr = index">
+      <td>
+        {{ (roundNr + 1) }}
+      </td>
+      <td *ng-for="var action of round.getPlayerActions(game.players)">
+        <span *ng-if="action != null">
+          {{ action.score }}
+        </span>
+      </td>
+    </tr>
+    <tr *ng-if="game.rounds.length === 0">
+      <td colspan="{{ game.players.length + 1 }}">
+        no rounds played yet
+      </td>
+    </tr>
+  </tbody>
+  <tfoot>
+    <td>
+      total
+    </td>
+    <td *ng-for="var player of game.players">
+      {{ getPlayerScore(player) }}
+    </td>
+  </tfoot>
+</table>
+
+  <h3>Next: {{ game.getNextPlayer().name }}</h3>
+
+  <form [ng-form-model]="actionForm" (submit)="submitActionForm($event)">
+    <label for="word-input">Word:</label>
+    <input id="word-input" type="text" [ng-form-control]="actionForm.controls.word" />
+
+    <label for="score-input">Score:</label>
+    <input id="score-input" type="number" [ng-form-control]="actionForm.controls.score" />
+
+    <input type="submit" value="save" />
+  </form>
+</div>
