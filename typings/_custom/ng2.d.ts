@@ -72,6 +72,8 @@ declare module "angular2/forms" {
     updateValue(value: any)
     _valueChanges: any
     valueChanges: any
+    value: any;
+    valid: boolean;
   }
   class ControlArray {
     removeAt(index: any)
@@ -81,6 +83,8 @@ declare module "angular2/forms" {
     constructor(controls: any)
     controls: any;
     valueChanges: any;
+    value: any;
+    valid: boolean;
   }
   class Validators {
     static required: any;
@@ -138,7 +142,9 @@ declare module "angular2/router" {
   }
   var RouterOutlet: any;
   var RouterLink: any;
-  var RouteParams: any;
+  class  RouteParams {
+    get(key: string): any    
+  }
   var routerInjectables: any;
   var RouteConfigAnnotation: any;
   var RouteConfig: any;
