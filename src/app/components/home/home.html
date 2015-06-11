@@ -4,7 +4,7 @@
 <h3>Current Games</h3>
 <ul>
   <li *ng-for="#game of games">
-    {{ game.id }}
+      <a [href]="gameUrl(game)" (click)="gotoGame($event, game)">Contine Game {{ game.id }}</a>
   </li>
 </ul>
 </div>

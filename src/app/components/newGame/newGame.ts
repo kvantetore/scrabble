@@ -45,7 +45,8 @@ export class NewGameComponent {
   startGame() {
     this.gameService.save(this.game)
       .then(game => {
-        this.router.nav
+          var url = this.router.parent.generate("play-game", {id: game.id});
+          return this.router.parent.navigate(url);
       })
   }
 }

@@ -130,6 +130,11 @@ declare module "angular2/src/router/location" {
 declare module "angular2/router" {
   class Instruction {}
   class Router {
+    parent: Router;
+    hostComponent: any;
+    navigating: boolean;
+    lastNavigationAttempt: string;
+    previousUrl: string;
     navigate(url: string): Promise<any>;
     config(config: any): Promise<any>;
     deactivate(): Promise<any>;

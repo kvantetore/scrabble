@@ -13,6 +13,7 @@ export class Game {
   id: string;
   players: Player[] = [];
   rounds: Round[] = [];
+  started: moment.Moment;
   finished: moment.Moment;
 
   serialize() {
@@ -20,6 +21,7 @@ export class Game {
       id: this.id,
       playerIds: this.players.map(p => p.id),
       rounds: this.rounds.map(round => round.serialize()),
+      started: serializeDate(this.started),
       finished: serializeDate(this.finished),
     }
   }
@@ -29,6 +31,7 @@ export class Game {
     game.id = data.id;
     game.players = data.players && data.players.map(p => Player.load(p)) || [];
     game.rounds = data.rounds && data.rounds.map(r => Round.load(r)) || [];
+    game.started = data.started && parseDate(data.started) || null;
     game.finished = data.finished && parseDate(data.finished) || null;
     return game;
   }
@@ -170,6 +173,10 @@ export class Action {
 
   word: string
   score: number;
+
+  constructor() {
+    this.date = moment();
+  }
 
   serialize() {
     return {

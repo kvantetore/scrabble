@@ -72,9 +72,17 @@ export class PlayComponent {
       return;
     }
 
+    //add action
     var action = new Action();
     action.score = Number(this.scoreInput.value);
     action.word = this.wordInput.value;
-    this. game.addAction(action);
+    this.game.addAction(action);
+
+    //save game
+    this.gameService.save(this.game);
+
+    //clear actionForm
+    this.scoreInput.updateValue("");
+    this.wordInput.updateValue("");
   }
 }
