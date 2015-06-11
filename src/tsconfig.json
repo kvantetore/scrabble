@@ -9,8 +9,7 @@
     "sourceMap": true
   },
   "files": [
-    "src/bootstrap.ts",
-    "src/references.d.ts",
-    "node_modules/typescript/bin/dom.d.ts"
+    "app/bootstrap.ts",
+    "references.d.ts"
   ]
 }
