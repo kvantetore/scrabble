@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "angular2": "2.0.0-alpha.26",
+    "firebase": "^2.2.7",
     "raw-loader": "^0.5.1",
     "reflect-metadata": "^0.1.0",
     "rtts_assert": "2.0.0-alpha.26",

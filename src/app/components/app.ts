@@ -5,6 +5,8 @@ import {BrowserLocation} from 'angular2/src/router/browser_location';
 import {HomeComponent} from './home/home';
 import {NewGameComponent} from './newGame/newGame';
 import {PlayComponent} from './play/play';
+import {WelcomeComponent} from './welcome/welcome';
+import {AuthService} from 'app/api/authService';
 
 let template = require("./app.html");
 
@@ -17,13 +19,31 @@ let template = require("./app.html");
   lifecycle: [onCheck, onInit, onChange, onAllChangesDone]
 })
 @RouteConfig([
-  {path: "/home", component: HomeComponent, as: "home"},
-  {path: "/newGame", component: NewGameComponent, as: "new-game"},
-  {path: "/play/:id", component: PlayComponent, as: "play-game"},
+  { path: "/", component: WelcomeComponent, as: "welcome" },
+  { path: "/home", component: HomeComponent, as: "home" },
+  { path: "/newGame", component: NewGameComponent, as: "new-game" },
+  { path: "/play/:id", component: PlayComponent, as: "play-game" },
 ])
 export class AppComponent {
-  constructor(private router: Router, private browserLocation: BrowserLocation) {
+  get hasAuth() {
+    return this.auth.hasAuth;
+  }
+
+  constructor(private router: Router, private browserLocation: BrowserLocation, private auth: AuthService) {
     let uri = browserLocation.path();
+
+    //navigates to welcome if not authenticated, otherwise to the requested uri
+    var url = this.hasAuth ? uri : "/";
     this.router.navigate(uri);
+  }
+
+  logOut(e: Event) {
+    e.preventDefault();
+
+    if (this.hasAuth) {
+      this.auth.logOut();
+      this.router
+        .navigate("/");
+    }
   }
 }

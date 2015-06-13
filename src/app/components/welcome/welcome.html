@@ -1,0 +1,15 @@
+<h1>Welcome to Scrabble Score Keeper!</h1>
+
+<div>
+  Please log in before proceeding
+</div>
+
+<ul>
+  <li><button (click)="authGoogle()">Log in with your google account</button></li>
+  <li><button (click)="authFacebook()">Log in with your facebook account</button></li>
+</ul>
+
+{{ hasError }}
+<div *ng-if="hasError">
+  Authentication error: {{ loginError }}
+</div>

@@ -1,8 +1,9 @@
-<nav role="menu">
+<nav role="menu" *ng-if="hasAuth">
   <ul>
     <li><h1>Scrabble Score Keeper</h1></li>
     <li><a href="" router-link="home">home</a></li>
     <li><a href="" router-link="new-game">new game</a></li>
+    <li><a href="" (click)="logOut($event)">log out</a></li>
   <ul>
 </nav>
 

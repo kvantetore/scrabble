@@ -3,3 +3,4 @@
 /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
 /// <reference path="../typings/moment/moment.d.ts" />
 /// <reference path="../typings/rx/rx.d.ts"/>
+/// <reference path="../typings/firebase/firebase-node.d.ts"/>
