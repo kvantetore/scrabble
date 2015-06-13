@@ -7,26 +7,20 @@ export class GameService {
   constructor() {
     //add test game
     this.save(Game.load({
-      players: [{
-        id: 1,
-        name: "Tore"
-      }, {
-        id: 2,
-        name: "Kjersti"
-      }],
+      playerIds: ["1", "2"],
       rounds: [{
         actions: [{
-            playerId: 1,
+            playerId: "1",
             word: "banan",
             score: 10
         }, {
-            playerId: 2,
+            playerId: "2",
             word: "eple",
             score: 10
         }]
       }, {
         actions: [{
-            playerId: 1,
+            playerId: "1",
             word: "fly",
             score: 10
         }]

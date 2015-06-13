@@ -11,7 +11,7 @@ function serializeDate(date: moment.Moment): string {
 
 export class Game {
   id: string;
-  players: Player[] = [];
+  playerIds: string[] = [];
   rounds: Round[] = [];
   started: moment.Moment;
   finished: moment.Moment;
@@ -19,7 +19,7 @@ export class Game {
   serialize() {
     return {
       id: this.id,
-      playerIds: this.players.map(p => p.id),
+      playerIds: this.playerIds,
       rounds: this.rounds.map(round => round.serialize()),
       started: serializeDate(this.started),
       finished: serializeDate(this.finished),
@@ -29,7 +29,7 @@ export class Game {
   static load(data: any) {
     let game = new Game();
     game.id = data.id;
-    game.players = data.players && data.players.map(p => Player.load(p)) || [];
+    game.playerIds = data.playerIds || [];
     game.rounds = data.rounds && data.rounds.map(r => Round.load(r)) || [];
     game.started = data.started && parseDate(data.started) || null;
     game.finished = data.finished && parseDate(data.finished) || null;
@@ -37,7 +37,7 @@ export class Game {
   }
 
   hasPlayer(player: Player) {
-    return this.players.some(p => p.id === player.id);
+    return this.playerIds.some(pid => pid === player.id);
   }
 
   addPlayer(player: Player) {
@@ -54,7 +54,7 @@ export class Game {
       throw new Error("Cannot add player, already added");
     }
 
-    this.players.push(player);
+    this.playerIds.push(player.id);
   }
 
   removePlayer(player: Player) {
@@ -71,16 +71,16 @@ export class Game {
       throw new Error("Cannot remove player, not added");
     }
 
-    this.players = this.players.filter(p => p.id !== player.id);
+    this.playerIds = this.playerIds.filter(pid => pid !== player.id);
   }
 
-  getNextPlayer() {
+  getNextPlayerId() {
     let currentRound: Round = this.getCurrentRound();
 
-    if (currentRound == null || currentRound.isCompleted(this.players.length)) {
-      return this.players[0];
+    if (currentRound == null || currentRound.isCompleted(this.playerIds.length)) {
+      return this.playerIds[0];
     } else {
-      return this.players[currentRound.actions.length];
+      return this.playerIds[currentRound.actions.length];
     }
   }
 
@@ -93,17 +93,17 @@ export class Game {
   }
 
   addAction(action: Action) {
-    let player = this.getNextPlayer();
+    let player = this.getNextPlayerId();
 
     //get or create current round
     let currentRound = this.getCurrentRound();
-    if (currentRound == null || currentRound.isCompleted(this.players.length)) {
+    if (currentRound == null || currentRound.isCompleted(this.playerIds.length)) {
       currentRound = new Round();
       this.rounds.push(currentRound);
     }
 
     //set correct playerId and add
-    action.playerId = player.id;
+    action.playerId = player;
     currentRound.addAction(action);
   }
 
@@ -111,7 +111,7 @@ export class Game {
     if (player == null) {
       throw new Error("Cannot find score for null player");
     }
-    if (!this.players.some(p => p.id === player.id)) {
+    if (!this.playerIds.some(pid => pid === player.id)) {
       throw new Error(`Player ${player.name} (${player.id}) is not in the player list`)
     }
 

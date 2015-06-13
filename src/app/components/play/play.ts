@@ -3,6 +3,7 @@ import {Router, RouteParams} from 'angular2/router';
 import {FormBuilder, ControlGroup, Control, formDirectives, Validators} from 'angular2/forms';
 
 import {GameService} from 'app/api/gameService';
+import {PlayerService} from 'app/api/playerService';
 import {Player} from 'app/models/player';
 import {Game, Action} from 'app/models/game';
 
@@ -18,6 +19,7 @@ let template = require('./play.html');
 })
 export class PlayComponent {
   game: Game;
+  players: Player[];
 
   actionForm: ControlGroup;
   wordInput: Control;
@@ -25,6 +27,7 @@ export class PlayComponent {
 
   constructor(
     private gameService: GameService,
+    private playerService: PlayerService,
     private router: Router,
     private routeParams: RouteParams,
     formBuilder: FormBuilder
@@ -33,11 +36,14 @@ export class PlayComponent {
     if (gameId == null) {
       throw new Error("Missing route parameter 'id'");
     }
-
+    
+    //load game and players
     gameService.getById(gameId)
-      .then(game => {
-        this.game = game;
-      });
+      .then(game => this.game = game)
+      .then(() => this.playerService.listPlayers())
+      .then(allPlayers => {
+        this.players = this.game.playerIds.map(pid => allPlayers.find(player => player.id == pid));
+      }); 
 
     //create form
     this.actionForm = formBuilder.group({
@@ -46,12 +52,6 @@ export class PlayComponent {
     });
     this.wordInput = this.actionForm.controls.word;
     this.scoreInput = this.actionForm.controls.score;
-
-    // this.actionForm.valueChanges.observer({
-    //   next: (change) => {
-    //     console.log("change", change);
-    //   }
-    // });
   }
 
   getPlayerScore(player: Player) {
@@ -60,6 +60,11 @@ export class PlayComponent {
     }
 
     return this.game.getPlayerScore(player);
+  }
+  
+  getNextPlayer() {
+    var nextPlayerId = this.game.getNextPlayerId();
+    return this.players.find(p => p.id == nextPlayerId);
   }
 
   submitActionForm(e) {
