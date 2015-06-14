@@ -3,8 +3,8 @@ import {Player} from '../models/player';
 //todo: communicate with server rather than providing static data
 export class PlayerService {
   private _players = [
-    Player.load({id: "1", name: "Tore"}),
-    Player.load({id: "2", name: "Kjersti"}),
+    Player.load({id: "p1", name: "Tore"}),
+    Player.load({id: "p2", name: "Kjersti"}),
   ];
 
 

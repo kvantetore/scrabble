@@ -6,7 +6,10 @@ function parseDate(input: string): moment.Moment {
 }
 
 function serializeDate(date: moment.Moment): string {
-  return moment.toString();
+  if (date == null) {
+    return null;
+  }
+  return date.format();
 }
 
 export class Game {
@@ -15,11 +18,15 @@ export class Game {
   rounds: Round[] = [];
   started: moment.Moment;
   finished: moment.Moment;
+  
+  constructor() {
+    this.started = moment();
+  }
 
   serialize() {
     return {
-      id: this.id,
-      playerIds: this.playerIds,
+      id: this.id || null,
+      playerIds: this.playerIds || [],
       rounds: this.rounds.map(round => round.serialize()),
       started: serializeDate(this.started),
       finished: serializeDate(this.finished),
@@ -28,7 +35,7 @@ export class Game {
 
   static load(data: any) {
     let game = new Game();
-    game.id = data.id;
+    game.id = data.id || null;
     game.playerIds = data.playerIds || [];
     game.rounds = data.rounds && data.rounds.map(r => Round.load(r)) || [];
     game.started = data.started && parseDate(data.started) || null;
@@ -77,10 +84,14 @@ export class Game {
   getNextPlayerId() {
     let currentRound: Round = this.getCurrentRound();
 
-    if (currentRound == null || currentRound.isCompleted(this.playerIds.length)) {
+    if (currentRound == null) {
       return this.playerIds[0];
     } else {
-      return this.playerIds[currentRound.actions.length];
+      var playerIdIndex = this.playerIds.findIndex(pid => currentRound.getPlayerAction(pid) == null);
+      if (playerIdIndex < 0 || playerIdIndex >= this.playerIds.length) {
+        return this.playerIds[0];
+      }
+      return this.playerIds[playerIdIndex];
     }
   }
 
@@ -117,7 +128,7 @@ export class Game {
 
     var score = 0;
     for (let round of this.rounds) {
-      var action = round.actions.find(a => a.playerId === player.id);
+      var action = round.getPlayerAction(player);
       if (action != null) {
         score += action.score;
       }
@@ -130,40 +141,61 @@ export class Game {
 }
 
 export class Round {
-  actions: Action[] = [];
+  actions: {[playerId: string]: Action} = {};
 
   serialize() {
+    var actionData = {};
+    Object.getOwnPropertyNames(this.actions).forEach(playerId => {
+      actionData[playerId] = this.actions[playerId].serialize();
+    });
+    
     return {
-      actions: this.actions.map(a => a.serialize()),
+      actions: actionData
     };
   }
 
   static load(data: any) {
     let round = new Round();
-    round.actions = data.actions && data.actions.map(a => Action.load(a)) || [];
+    round.actions = {};
+    if (data.actions != null) {
+      Object.getOwnPropertyNames(data.actions).forEach(playerId => {
+        round.actions[playerId] = Action.load(data.actions[playerId]); 
+      })
+    }
     return round;
   }
 
   addAction(action: Action) {
-    this.actions.push(action);
+    if (action.playerId == null) {
+      throw new Error("Cannot add action without playerId");
+    }
+    this.actions[action.playerId] = action;
   }
 
   isCompleted(playerCount: number) {
-    return this.actions.length >= playerCount;
+    return Object.getOwnPropertyNames(this.actions).length >= playerCount
+    ;
   }
 
   getPlayerActions(players: Player[]) {
     return players.map(p => this.getPlayerAction(p));
   }
 
-  getPlayerAction(player: Player) {
-    if (player == null) {
-      throw new Error("Cannot find action for null player");
+  getPlayerAction(player: Player|string) {
+    var playerId: string;
+    if (typeof player === 'string') {
+      playerId = player;
     }
-    if (player.id == null) {
-      throw new Error("Cannot find action for player without id");
+    else {
+      if (player == null) {
+        throw new Error("Cannot find action for null player");
+      }
+      if (player.id == null) {
+        throw new Error("Cannot find action for player without id");
+      }
+      playerId = player.id;
     }
-    return this.actions.find(a => a.playerId == player.id);
+    return this.actions[playerId];
   }
 }
 
@@ -180,10 +212,10 @@ export class Action {
 
   serialize() {
     return {
-      playerId: this.playerId,
+      playerId: this.playerId || null,
       date: serializeDate(this.date),
-      word: this.word,
-      score: this.score,
+      word: this.word || null,
+      score: this.score || null,
     }
   }
 
