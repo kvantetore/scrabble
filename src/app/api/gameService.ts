@@ -9,35 +9,6 @@ export class GameService {
   private _games: {[id: string]: Game} = {};
 
   constructor(private firebase: FirebaseService) {
-    // add test game
-    // this.save(Game.load({
-    //   playerIds: ["p1", "p2"],
-    //   rounds: [{
-    //     actions: {
-    //       "p1": {
-    //         playerId: "p1",
-    //         word: "banan",
-    //         score: 10
-    //       },
-    //       "p2": {
-    //         playerId: "p2",
-    //         word: "eple",
-    //         score: 10
-    //       }
-    //     }
-    //   }, {
-    //     actions: {
-    //       "p1": {
-    //         playerId: "p1",
-    //         word: "fly",
-    //         score: 10
-    //       }
-    //     }
-    //   }]
-    // }))
-    // .catch(error => {
-    //   console.warn("unable to save test data", error);
-    // });
   }
 
   listActiveGames(): Promise<Game[]> {
@@ -77,7 +48,7 @@ export class GameService {
     });
     
     promise.catch(err => {
-      console.log(err);
+      console.log("Unable to get game", id, err);
     })
     
     return promise;

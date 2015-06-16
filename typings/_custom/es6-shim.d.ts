@@ -6,7 +6,6 @@
 
 interface Array<T> {
     copyWithin: (target: number, start: number) => Array<T>;
-    fill: (value: T) => Array<T>;
     find: (predicate: (value: T) => boolean) => T;
     findIndex: (predicate: (value: T) => boolean) => number;
 }
@@ -36,7 +35,6 @@ interface Number {
 
 interface String {
     repeat: (times: number) => string;
-    startsWith: (searchStr: string) => boolean;
     endsWith: (searchStr: string) => boolean;
     contains: (searchStr: string) => boolean;
     codePointAt: (pos: number) => number;

@@ -11,7 +11,6 @@ module.exports = {
   entry: {
     angular2: [
       // Angular 2 Deps
-      'zone.js',
       'reflect-metadata',
       'rtts_assert/rtts_assert',
 

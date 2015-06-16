@@ -1,14 +1,36 @@
 <html>
+  
   <head>
     <title>Scrabble</title>
     <base href="/" />
+    <script src="/lib/zone.js"></script>
+    <script src="/bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
+  <script>
+    window.Polymer = window.Polymer || {};
+    window.Polymer.dom = 'shadow';
+  </script>
     <script src="/lib/traceur-runtime.min.js"></script>
+    <script src="/__build__/common.js"></script>
+    <script src="/__build__/angular2.js"></script>
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="import" href="/elements.html">
   </head>
-  <body>
-    <!-- The app component created in app.ts -->
-    <app></app>
+<body class="fullbleed layout vertical">
+  <app></app>
+    <script src="/__build__/app.js"></script>
+</body>
+  
+  <!--<body class="fullbleed layout vertical">
+    <paper-header-panel class="flex">
+      <paper-toolbar>
+        <div>Hello World!</div>
+      </paper-toolbar>
+      
+      <app></app>
+    </paper-header-panel>
     <script src="/__build__/common.js"></script>
     <script src="/__build__/angular2.js"></script>
     <script src="/__build__/app.js"></script>
-  </body>
+  </body>-->
+
 </html>

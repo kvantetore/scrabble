@@ -7,4 +7,28 @@
       <a [href]="gameUrl(game)" (click)="gotoGame($event, game)">Contine Game {{ game.id }}</a>
   </li>
 </ul>
+
+<div>
+  material button: 
+    <paper-button raised (^click)="gotoGame($event, games[0])">
+      custom button content
+    </paper-button>
+</div>
+
+<div>
+  <div layout="row" [control-group]="form">
+    <div flex="30"> Search</div>
+    <input flex="50" control="input" type="text">
+    <button flex="20" class="md-button md-primary md-raised md-default-theme"
+            (click)="fetch()">Fetch
+    </button>
+  </div>
+</div>
+
+<div>
+            <a href="" (click)="gotoGame($event, games[0])">
+            <iron-icon icon="mail"></iron-icon>
+            <span>Log Out</span>
+          </a>
+
 </div>

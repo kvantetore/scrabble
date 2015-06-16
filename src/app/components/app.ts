@@ -15,11 +15,11 @@ let template = require("./app.html");
 })
 @View({
   template: template,
-  directives: [RouterOutlet, RouterLink, coreDirectives],
+  directives: [RouterOutlet, RouterLink, coreDirectives, HomeComponent, NewGameComponent],
   lifecycle: [onCheck, onInit, onChange, onAllChangesDone]
 })
 @RouteConfig([
-  { path: "/", component: WelcomeComponent, as: "welcome" },
+  //{ path: "/", component: WelcomeComponent, as: "welcome" },
   { path: "/home", component: HomeComponent, as: "home" },
   { path: "/newGame", component: NewGameComponent, as: "new-game" },
   { path: "/play/:id", component: PlayComponent, as: "play-game" },
@@ -34,7 +34,7 @@ export class AppComponent {
 
     //navigates to welcome if not authenticated, otherwise to the requested uri
     var url = this.hasAuth ? uri : "/";
-    this.router.navigate(uri);
+    //this.router.navigate(uri);
   }
 
   logOut(e: Event) {

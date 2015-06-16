@@ -50,6 +50,7 @@
     <label for="score-input">Score:</label>
     <input id="score-input" type="number" [ng-form-control]="actionForm.controls.score" />
 
-    <input type="submit" value="save" />
+    <input type="submit" value="add word" />
+    <input type="button" value="finish game" (onclick)="finishGame()" /> 
   </form>
 </div>

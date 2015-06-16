@@ -90,4 +90,13 @@ export class PlayComponent {
     this.scoreInput.updateValue("");
     this.wordInput.updateValue("");
   }
+  
+  finishGame() {
+    if (this.game == null) {
+      throw new Error("Game is not loaded yet, cannot add action")
+    }
+    
+    this.game.finishGame();
+    this.gameService.save(this.game);
+  }
 }

@@ -5,5 +5,6 @@ import {document} from 'angular2/src/facade/browser';
 export var hasShadowDom = Boolean(document && document.body && document.body.createShadowRoot);
 
 export var shadowDomInjectables = (!hasShadowDom) ? [] : [
-  bind(ShadowDomStrategy).toClass(NativeShadowDomStrategy)
+  //disable shadow dom in order for polymer styles to propagate properly.
+  //bind(ShadowDomStrategy).toClass(NativeShadowDomStrategy)
 ]

@@ -1,5 +1,4 @@
-declare var zone: any;
-declare var Zone: any;
+/// <reference path="../globals.d.ts" />
 
 
 declare module "angular2/change_detection" {
@@ -26,11 +25,47 @@ declare module 'angular2/src/services/url_resolver' {
 }
 
 declare module "angular2/src/facade/async" {
-  class Observable {}
-  class EventEmitter {
-    next(val:any)
-    return(val:any)
-    throw(val:any)
+  var Promise: any;
+  class PromiseWrapper {
+      static resolve(obj: any): Promise<any>;
+      static reject(obj: any, _: any): Promise<any>;
+      static catchError<T>(promise: Promise<T>, onError: (error: any) => T | Thenable<T>): Promise<T>;
+      static all(promises: List<any>): Promise<any>;
+      static then<T>(promise: Promise<T>, success: (value: any) => T | Thenable<T>, rejection?: (error: any, stack?: any) => T | Thenable<T>): Promise<T>;
+      static completer(): {
+          promise: any;
+          resolve: any;
+          reject: any;
+      };
+      static isPromise(maybePromise: any): boolean;
+  }
+  class TimerWrapper {
+      static setTimeout(fn: Function, millis: int): int;
+      static clearTimeout(id: int): void;
+      static setInterval(fn: Function, millis: int): int;
+      static clearInterval(id: int): void;
+  }
+  class ObservableWrapper {
+      static subscribe(emitter: Observable, onNext: any, onThrow?: any, onReturn?: any): Object;
+      static isObservable(obs: any): boolean;
+      static dispose(subscription: any): void;
+      static callNext(emitter: EventEmitter, value: any): void;
+      static callThrow(emitter: EventEmitter, error: any): void;
+      static callReturn(emitter: EventEmitter): void;
+  }
+  class Observable {
+      observer(generator: any): Object;
+  }
+  
+  class EventEmitter extends Observable {
+      _subject: Rx.Subject<any>;
+      _immediateScheduler: any;
+      constructor();
+      observer(generator: any): Rx.IDisposable;
+      toRx(): Rx.Observable<any>;
+      next(value: any): void;
+      throw(error: any): void;
+      return(value: any): void;
   }
 }
 
@@ -279,4 +314,88 @@ declare module "angular2/di" {
   var InjectLazy: any;
   var Optional: any;
   var Injectable: any;
+}
+
+
+declare module 'angular2/src/facade/lang' {
+  var Type: FunctionConstructor;
+  type Type = new (...args: any[]) => any;
+  
+  var Math: Math;
+  var Date: DateConstructor;
+  function assertionsEnabled(): boolean;
+  function CONST_EXPR<T>(expr: T): T;
+  function CONST(): (target: any) => any;
+  function ABSTRACT(): (t: any) => any;
+  function IMPLEMENTS(_: any): (t: any) => any;
+  function isPresent(obj: any): boolean;
+  function isBlank(obj: any): boolean;
+  function isString(obj: any): boolean;
+  function isFunction(obj: any): boolean;
+  function isType(obj: any): boolean;
+  function stringify(token: any): string;
+  
+  class StringWrapper {
+      static fromCharCode(code: int): string;
+      static charCodeAt(s: string, index: int): number;
+      static split(s: string, regExp: any): string[];
+      static equals(s: string, s2: string): boolean;
+      static replace(s: string, from: string, replace: string): string;
+      static replaceAll(s: string, from: RegExp, replace: string): string;
+      static toUpperCase(s: string): string;
+      static toLowerCase(s: string): string;
+      static startsWith(s: string, start: string): boolean;
+      static substring(s: string, start: int, end?: int): string;
+      static replaceAllMapped(s: string, from: RegExp, cb: Function): string;
+      static contains(s: string, substr: string): boolean;
+  }
+  class StringJoiner {
+      parts: any[];
+      constructor(parts?: any[]);
+      add(part: string): void;
+      toString(): string;
+  }
+  class NumberWrapper {
+      static toFixed(n: number, fractionDigits: int): string;
+      static equal(a: any, b: any): boolean;
+      static parseIntAutoRadix(text: string): int;
+      static parseInt(text: string, radix: int): int;
+      static parseFloat(text: string): number;
+      static NaN: number;
+      static isNaN(value: any): boolean;
+      static isInteger(value: any): boolean;
+  }
+  var RegExp: RegExpConstructor;
+  class RegExpWrapper {
+      static create(regExpStr: any, flags?: string): RegExp;
+      static firstMatch(regExp: RegExp, input: string): List<string>;
+      static test(regExp: RegExp, input: string): boolean;
+      static matcher(regExp: any, input: any): {
+          re: any;
+          input: any;
+      };
+  }
+  class RegExpMatcherWrapper {
+      static next(matcher: any): any;
+  }
+  class FunctionWrapper {
+      static apply(fn: Function, posArgs: any): any;
+  }
+  function looseIdentical(a: any, b: any): boolean;
+  function getMapKey(value: any): any;
+  function normalizeBlank(obj: any): any;
+  function normalizeBool(obj: boolean): boolean;
+  function isJsObject(o: any): boolean;
+  function print(obj: any): void;
+  class Json {
+      static parse(s: string): any;
+      static stringify(data: any): string;
+  }
+  class DateWrapper {
+      static fromMillis(ms: any): Date;
+      static toMillis(date: Date): number;
+      static now(): Date;
+      static toJson(date: any): any;
+  }
+  
 }

@@ -137,6 +137,9 @@ export class Game {
     return score;
   }
 
+  finishGame() {
+    this.finished = moment();
+  }
 
 }
 

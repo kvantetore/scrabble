@@ -13,11 +13,17 @@
   "license": "ISC",
   "dependencies": {
     "angular2": "2.0.0-alpha.26",
+    "bower": "^1.4.1",
+    "del": "^1.2.0",
     "firebase": "^2.2.7",
+    "gulp-concat": "^2.5.2",
+    "gulp-filter": "^2.0.2",
+    "gulp-typescript": "^2.7.6",
     "raw-loader": "^0.5.1",
     "reflect-metadata": "^0.1.0",
     "rtts_assert": "2.0.0-alpha.26",
     "rx": "^2.5.3",
+    "through2": "^2.0.0",
     "zone.js": "^0.5.0"
   },
   "devDependencies": {
