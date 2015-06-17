@@ -1,6 +1,15 @@
 
 <paper-material *ng-for="#game of games">
-    <h2>{{ game.title }}</h2>
-    <paper-button (click)="gotoGame($event, game)">Resume Game</paper-button>
+    <paper-toolbar>
+        <div>{{ game.title }}</div>
+    </paper-toolbar>
+    <paper-item>
+        <span *ng-for="#player of getGamePlayers(game)">
+            {{ player.name }}: {{ game.getPlayerScore(player) }}
+        </span>
+    </paper-item>
+    <div class="layout horizontal end-justified">
+        <paper-button (click)="gotoGame($event, game)">Resume Game</paper-button>
+    </div>
 </paper-material>
 
