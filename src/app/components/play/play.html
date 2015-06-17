@@ -3,7 +3,7 @@
 </div>
 <div *ng-if="game != null && players != null">
   <paper-material>
-    <paper-toolbar style="margin: -15px -15px 0 -15px;">
+    <paper-toolbar class="paper-red">
       <div class="flex">{{ game.title }}</div>
       <paper-icon-button icon="more-vert" (click)="clickMenu($event)"></paper-icon-button>
       <custom-dropdown-list (click)="closeMenu($event)">
@@ -53,7 +53,10 @@
   </paper-material>
 
   <paper-material *ng-if="!game.isFinished">
-    <h3>Next: {{ getNextPlayer().name }}</h3>
+    <paper-toolbar>
+      <div class="flex">Next action for {{ getNextPlayer().name }}</div>
+    </paper-toolbar>
+    
     <form [ng-form-model]="actionForm" (submit)="submitActionForm($event)">
       <paper-input-container>
         <label>word</label>
@@ -67,16 +70,19 @@
   
       <button type="submit" style="display:none">hidden submit-button</button>
   
-      <div class="layout horizontal end-justified">
-        <paper-button (click)="submitActionForm($event)">
+      <div class="buttons layout horizontal end-justified">
+        <paper-button raised (click)="submitActionForm($event)">
            Add Word
+        </paper-button>
+        <paper-button (click)="skipRound()">
+           Skip Round
         </paper-button>
       </div>
     </form>
   </paper-material>
 </div>
 
-<paper-dialog class="finish-game-dialog">
+<paper-dialog class="finish-game-dialog" modal>
   <p>
     Are you sure the game is finished?
   </p>

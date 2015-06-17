@@ -83,19 +83,27 @@ export class PlayComponent {
       this.scoreInput.updateValue("");
       throw new Error("Score is not a number")
     }
-
-    //add action
-    var action = new Action();
-    action.score = score;
-    action.word = this.wordInput.value;
-    this.game.addAction(action);
-
-    //save game
-    this.gameService.save(this.game);
+    
+    this.addAction(this.scoreInput.value, score);
 
     //clear actionForm
     this.scoreInput.updateValue("");
     this.wordInput.updateValue("");
+  }
+
+  skipRound() {
+    this.addAction(null, 0);
+  }
+  
+  private addAction(word: string, score: number) {
+    //add action
+    var action = new Action();
+    action.word = word;
+    action.score = score;
+    this.game.addAction(action);
+
+    //save game
+    this.gameService.save(this.game);
   }
   
   showFinishGameDialog() {
