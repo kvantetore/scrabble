@@ -1,6 +1,8 @@
 import {Component, View, coreDirectives, CSSClass} from 'angular2/angular2';
 import {Router} from 'angular2/router';
 
+import * as moment from 'moment';
+
 import {PlayerService} from 'app/api/playerService';
 import {GameService} from 'app/api/gameService';
 import {Player} from 'app/models/player';
@@ -43,6 +45,7 @@ export class NewGameComponent {
   }
 
   startGame() {
+    this.game.started = moment();
     this.gameService.save(this.game)
       .then(game => {
           var url = this.router.parent.generate("play-game", {id: game.id});

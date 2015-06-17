@@ -19,6 +19,28 @@ export class Game {
   started: moment.Moment;
   finished: moment.Moment;
   
+  get title() {
+    var ret: string;
+    if (this.finished == null)
+    {
+      ret = "Game started "
+      if (this.started != null) {
+        ret = ret + this.started.fromNow();
+      }
+      else {
+        ret = ret + "some time ago";
+      }
+    }
+    else {
+      ret  = "Game finished " + this.finished.fromNow();
+    }
+    return ret;
+  }
+  
+  get isFinished(): boolean {
+    return this.finished != null;
+  }
+  
   constructor() {
     this.started = moment();
   }
@@ -129,7 +151,7 @@ export class Game {
     var score = 0;
     for (let round of this.rounds) {
       var action = round.getPlayerAction(player);
-      if (action != null) {
+      if (action != null && !isNaN(action.score)) {
         score += action.score;
       }
     }
@@ -139,6 +161,10 @@ export class Game {
 
   finishGame() {
     this.finished = moment();
+  }
+  
+  reopenGame() {
+    this.finished = null;
   }
 
 }

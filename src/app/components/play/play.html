@@ -1,56 +1,97 @@
-<h2>Play</h2>
-
 <div *ng-if="game == null || players == null">
   Loading game...
 </div>
 <div *ng-if="game != null && players != null">
+  <paper-material>
+    <paper-toolbar style="margin: -15px -15px 0 -15px;">
+      <div class="flex">{{ game.title }}</div>
+      <paper-icon-button icon="more-vert" (click)="clickMenu($event)"></paper-icon-button>
+      <custom-dropdown-list (click)="closeMenu($event)">
+        <paper-menu>
+          <paper-item *ng-if="!game.isFinished"><paper-button (click)="showFinishGameDialog()">Finish Game</paper-button></paper-item>
+          <paper-item *ng-if="game.isFinished"><paper-button (click)="reopenGame()">Re-open Game</paper-button></paper-item>
+          <paper-item><paper-button (^click)="showDeleteGameDialog()">Delete Game</paper-button></paper-item>
+        </paper-menu>
+      </custom-dropdown-list>
+    </paper-toolbar>
+    
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th class="text">round</th>
+          <th class="number" *ng-for="var player of players">
+            {{ player.name }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ng-for="var round of game.rounds; #roundNr = index">
+          <td class="text">
+            round {{ (roundNr + 1) }}
+          </td>
+          <td class="number" *ng-for="var action of round.getPlayerActions(players)">
+            <span *ng-if="action != null">
+              {{ action.score }}
+            </span>
+          </td>
+        </tr>
+        <tr *ng-if="game.rounds.length === 0">
+          <td class="text" colspan="{{ players.length + 1 }}">
+            no rounds played yet
+          </td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <th class="text">
+          total
+        </th>
+        <th class="number" *ng-for="var player of players">
+          {{ getPlayerScore(player) }}
+        </th>
+      </tfoot>
+    </table>
+  </paper-material>
 
-<table>
-  <thead>
-    <tr>
-      <th>round</th>
-      <th *ng-for="var player of players">
-        {{ player.name }}
-      </th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ng-for="var round of game.rounds; #roundNr = index">
-      <td>
-        {{ (roundNr + 1) }}
-      </td>
-      <td *ng-for="var action of round.getPlayerActions(players)">
-        <span *ng-if="action != null">
-          {{ action.score }}
-        </span>
-      </td>
-    </tr>
-    <tr *ng-if="game.rounds.length === 0">
-      <td colspan="{{ players.length + 1 }}">
-        no rounds played yet
-      </td>
-    </tr>
-  </tbody>
-  <tfoot>
-    <td>
-      total
-    </td>
-    <td *ng-for="var player of players">
-      {{ getPlayerScore(player) }}
-    </td>
-  </tfoot>
-</table>
-
-  <h3>Next: {{ getNextPlayer().name }}</h3>
-
-  <form [ng-form-model]="actionForm" (submit)="submitActionForm($event)">
-    <label for="word-input">Word:</label>
-    <input id="word-input" type="text" [ng-form-control]="actionForm.controls.word" />
-
-    <label for="score-input">Score:</label>
-    <input id="score-input" type="number" [ng-form-control]="actionForm.controls.score" />
-
-    <input type="submit" value="add word" />
-    <input type="button" value="finish game" (onclick)="finishGame()" /> 
-  </form>
+  <paper-material *ng-if="!game.isFinished">
+    <h3>Next: {{ getNextPlayer().name }}</h3>
+    <form [ng-form-model]="actionForm" (submit)="submitActionForm($event)">
+      <paper-input-container>
+        <label>word</label>
+        <input id="" is="iron-input" [ng-form-control]="actionForm.controls.word" type="text">
+      </paper-input-container>
+  
+      <paper-input-container>
+        <label>score</label>
+        <input is="iron-input" [ng-form-control]="actionForm.controls.score" value="" type="text">
+      </paper-input-container>
+  
+      <button type="submit" style="display:none">hidden submit-button</button>
+  
+      <div class="layout horizontal end-justified">
+        <paper-button (click)="submitActionForm($event)">
+           Add Word
+        </paper-button>
+      </div>
+    </form>
+  </paper-material>
 </div>
+
+<paper-dialog class="finish-game-dialog">
+  <p>
+    Are you sure the game is finished?
+  </p>
+  <div class="buttons">
+    <paper-button dialog-confirm autofocus (click)="finishGame()">Finish it</paper-button>
+    <paper-button dialog-dismiss autofocus>Cancel</paper-button>
+  </div>
+</paper-dialog>
+
+<paper-dialog class="delete-game-dialog">
+  <p>
+    Are you sure you want to delete the game? This action cannot be undone!
+  </p>
+  <div class="buttons">
+    <paper-button dialog-confirm autofocus (click)="deleteGame()">Delete it</paper-button>
+    <paper-button dialog-dismiss autofocus>Cancel</paper-button>
+  </div>
+</paper-dialog>

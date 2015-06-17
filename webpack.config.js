@@ -44,6 +44,7 @@ module.exports = {
       '.ts',
       '.js',
       '.json',
+      '.less',
       '.webpack.js',
       '.web.js'
     ],
@@ -60,6 +61,9 @@ module.exports = {
 
       // Support for CSS as raw text
       { test: /\.css$/,   loader: 'raw' },
+
+      // Support for CSS as raw text
+      { test: /\.less$/,   loader: 'less' },
 
       // support for .html as raw text
       { test: /\.html$/,  loader: 'raw' },

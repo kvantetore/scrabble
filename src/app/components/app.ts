@@ -9,17 +9,18 @@ import {WelcomeComponent} from './welcome/welcome';
 import {AuthService} from 'app/api/authService';
 
 let template = require("./app.html");
+let styles = require("!raw!less!./app.less");
 
 @Component({
   selector: "app",
 })
 @View({
-  template: template,
+  template: `<style>${styles}</style>${template}`,
   directives: [RouterOutlet, RouterLink, coreDirectives, HomeComponent, NewGameComponent],
   lifecycle: [onCheck, onInit, onChange, onAllChangesDone]
 })
 @RouteConfig([
-  //{ path: "/", component: WelcomeComponent, as: "welcome" },
+  { path: "/", component: WelcomeComponent, as: "welcome" },
   { path: "/home", component: HomeComponent, as: "home" },
   { path: "/newGame", component: NewGameComponent, as: "new-game" },
   { path: "/play/:id", component: PlayComponent, as: "play-game" },
@@ -28,13 +29,17 @@ export class AppComponent {
   get hasAuth() {
     return this.auth.hasAuth;
   }
+  
+  getAuth() {
+    return this.auth.hasAuth;
+  }
 
   constructor(private router: Router, private browserLocation: BrowserLocation, private auth: AuthService) {
     let uri = browserLocation.path();
 
     //navigates to welcome if not authenticated, otherwise to the requested uri
     var url = this.hasAuth ? uri : "/";
-    //this.router.navigate(uri);
+    this.router.navigate(url);
   }
 
   logOut(e: Event) {

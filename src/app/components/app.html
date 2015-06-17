@@ -1,4 +1,4 @@
-<paper-drawer-panel id="main-drawer">
+<paper-drawer-panel id="main-drawer" *ng-if="hasAuth">
   <paper-header-panel drawer>
         <!-- Drawer Toolbar -->
         <paper-toolbar>
@@ -27,8 +27,15 @@
   <paper-header-panel main>
     <paper-toolbar>
       <paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
-      <div>Title</div>
+      <div>Scrabble Score Keeper</div>
     </paper-toolbar>
-    <div><router-outlet></router-outlet></div>
+    <div class="main-container">
+      <router-outlet></router-outlet>
+    </div>
   </paper-header-panel>
 </paper-drawer-panel>
+
+
+<div *ng-if="!hasAuth">
+  <router-outlet></router-outlet>
+</div>

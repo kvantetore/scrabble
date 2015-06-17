@@ -4,7 +4,7 @@ import {RouterLink, RouteConfig, Router} from 'angular2/router';
 import {Game} from 'app/models/game';
 import {GameService} from 'app/api/gameService';
 
-let styles   = require('./home.css');
+let styles   = require('!raw!less!./home.less');
 let template = require('./home.html');
 
 @Component({
@@ -17,18 +17,11 @@ let template = require('./home.html');
 export class HomeComponent {
   games: Game[];
 
-  constructor(private element: ElementRef, gameService: GameService, private router: Router) {
+  constructor(gameService: GameService, private router: Router) {
     gameService.listActiveGames()
       .then(games => {
         this.games = games;
       })
-      
-      for (let button of element.domElement.getElementsByTagName("paper-button")) {
-        button.addEventListener('click', function(evt) {
-            evt.preventDefault();
-            console.log("click!")
-          });
-      }
   }
   
   gameUrl(game: Game) {
